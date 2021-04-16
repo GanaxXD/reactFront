@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import ReactBootstrap, {Container, Row, Col} from 'react-bootstrap';
+import {Container, Row, Col} from 'react-bootstrap';
 
 const Form = (props) => {
 
