@@ -4,7 +4,7 @@ import {Alert, Button} from 'react-bootstrap';
 const ButtonHome = (props)=>{
     return (
         <Fragment>
-            <Button variant="outline-dark" href="#">Voltar à Página inicial</Button>
+            <Button variant={props.variant} href="#">{props.title}</Button>
         </Fragment>
     );
 }
