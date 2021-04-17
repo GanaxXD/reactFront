@@ -29,9 +29,19 @@ const HomeForm = (props) =>{
                     <div>
                         <InputGroup className="mb-3">
                             <InputGroup.Prepend >
+                                <FormControl className="cardClientInput"
+                                    placeholder="Nome"
+                                    arial-label="nome"
+                                    aerial-describedby="basic-addon1"
+                                />
+                            </InputGroup.Prepend>
+                        </InputGroup>
+
+                        <InputGroup className="mb-3">
+                            <InputGroup.Prepend >
                                 <InputGroup.Text id="basic-addon1" >@</InputGroup.Text>
                                 <FormControl className="cardClientInput"
-                                    placeholder="e-mail"
+                                    placeholder="E-mail"
                                     arial-label="e-mail"
                                     aerial-describedby="basic-addon1"
                                 />
