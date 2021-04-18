@@ -72,7 +72,7 @@ const FormClient = (props) =>{
 
             {/* Footer */}
             <hr/>
-            <ButtonHome variant="outline-dark" title="Voltar Para a Página Inicial"/>
+            <ButtonHome variant="outline-dark" link="/" title="Voltar Para a Página Inicial"/>
         </form>
     );
 }

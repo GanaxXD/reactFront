@@ -28,7 +28,7 @@ form{
     background-color: rgb(250, 250, 250);
 }
 
-html{
+html, div{
     background-color: rgb(250, 250, 250);
 }
 
@@ -36,6 +36,7 @@ html{
     margin: 50px;
     width: auto;
     align-self: center;
+    background-color: white;
 }
 
 .inputSpace{

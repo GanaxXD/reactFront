@@ -11,11 +11,10 @@ const NavBarApp = ()=>{
                     <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="/clientes">Cadastrar Cliente</Nav.Link>
-
-                        <Nav.Link href="#">Cadastrar Ordem de Serviço</Nav.Link>
-                        <Nav.Link href="#">Cadastrar Comentário</Nav.Link>
-                        <Nav.Link href="#">Listar Clientes</Nav.Link>
-                        <Nav.Link href="#">Listar Ordens de Serviço</Nav.Link>
+                        <Nav.Link href="/ordemservico">Cadastrar Ordem de Serviço</Nav.Link>
+                        <Nav.Link href="/comentarios">Cadastrar Comentário</Nav.Link>
+                        <Nav.Link href="/listaclientes">Listar Clientes</Nav.Link>
+                        <Nav.Link href="listaordens">Listar Ordens de Serviço</Nav.Link>
                     </Nav>
                     </Navbar.Collapse>
                 </Navbar>
