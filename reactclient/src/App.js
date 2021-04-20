@@ -1,11 +1,11 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Form from './components/Form';
+import FormClient from './screens/FormClient';
 
 function App() {
   return (
     <div className="App">
-      <Form/>
+      <FormClient/>
     </div>
   );
 }
