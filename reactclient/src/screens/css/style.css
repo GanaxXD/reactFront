@@ -43,3 +43,7 @@ html, div{
     margin: 20px;
     padding-left: auto;
 }
+
+div > a {
+    background-color:#343a40 ;
+}

@@ -5,11 +5,11 @@ import {Link} from 'react-router-dom';
 const NavBarApp = ()=>{
     return(
         <Fragment>
-            <div margin-top = "5px">
-                <Navbar expand="lg" bg="dark" variant="dark" className="mr-auto">
+            {/* <div margin-top = "5px"> */}
+                <Navbar collapseOnSelect expand="lg" bg="dark"  variant ="dark"  className="mr-auto">
                     <Navbar.Brand href="/">CADASTRO DE CLIENTES E ORDENS DE SERVIÇO</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                    <Navbar.Collapse id="basic-navbar-nav">
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
+                    <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="mr-auto" >
                             <Nav.Link as={Link} to="/clientes">Cadastrar Cliente</Nav.Link>
                             <Nav.Link as={Link} to="/ordemservico">Cadastrar Ordem de Serviço</Nav.Link>
@@ -19,7 +19,7 @@ const NavBarApp = ()=>{
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-            </div>
+            {/* </div> */}
         </Fragment>
     );
 
