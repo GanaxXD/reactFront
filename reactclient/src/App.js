@@ -1,11 +1,11 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import FormClient from './screens/FormClient';
+import AppRoutes from './routes';
 
 function App() {
   return (
     <div className="App">
-      <FormClient/>
+      <AppRoutes/>
     </div>
   );
 }

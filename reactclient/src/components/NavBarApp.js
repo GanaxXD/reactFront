@@ -1,22 +1,27 @@
-import {Navbar} from 'react-bootstrap';
+import React, { Fragment } from 'react';
+import {Navbar, Nav} from 'react-bootstrap';
 
-const NavBarApp = () =>{
+const NavBarApp = ()=>{
     return(
-        <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="#">CADASTRO DE CLIENTES E ORDENS DE SERVIÇO</Navbar.Brand>
-            <Navbar.Toggle arial-controls="basic-navbar-nav">
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Link href="#">Cadastrar Clientes</Nav.Link>
-                        <Nav.Link href="#">Cadastrar Ordem de Serviço</Nav.Link>
-                        <Nav.Link href="#">Cadastrar Comentário</Nav.Link>
-                        <Nav.Link href="#">Listar Clientes</Nav.Link>
-                        <Nav.Link href="#">Listar Ordens de Serviço</Nav.Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar.Toggle>
-        </Navbar>
+        <Fragment>
+            <div margin-top = "5px">
+                <Navbar expand="lg" bg="dark" variant="dark" className="mr-auto">
+                    <Navbar.Brand href="/">CADASTRO DE CLIENTES E ORDENS DE SERVIÇO</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto" >
+                            <Nav.Link href="/clientes">Cadastrar Cliente</Nav.Link>
+                            <Nav.Link href="/ordemservico">Cadastrar Ordem de Serviço</Nav.Link>
+                            <Nav.Link href="/comentarios">Cadastrar Comentário</Nav.Link>
+                            <Nav.Link href="/listaclientes">Listar Clientes</Nav.Link>
+                            <Nav.Link href="listaordens">Listar Ordens de Serviço</Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+            </div>
+        </Fragment>
     );
+
 }
 
 export default NavBarApp;
