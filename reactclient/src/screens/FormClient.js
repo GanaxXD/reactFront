@@ -55,10 +55,11 @@ const FormClient = (props) =>{
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">
                                     <FormControl 
-                                            placeholder="Telefone"
+                                            placeholder="Telefone (xx) nnnnn-nnnn"
                                             arial-label="telefone"
                                             aerial-describedby="basic-addon1"
-                                            type="fone"
+                                            type="tel"
+                                            pattern="([09]{2})[0-9]{5}-[0-9]{4}"
                                     />
                                 </Col>
                             </InputGroup>
