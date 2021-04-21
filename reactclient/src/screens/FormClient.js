@@ -1,24 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
-import {Card, InputGroup, FormControl, Col, Row, Container} from 'react-bootstrap';
+import {Card, InputGroup, FormControl, Col, Alert, Container} from 'react-bootstrap';
 import './css/style.css';
 
-const initialState={
-    pageTitle:'Cadastro de Clientes',
+async function cadastrar(client){
+    let data = fetch('https://api-client-serviceorder.herokuapp.com/clientes')
 }
-
 
 const FormClient = (props) =>{
 
+    const initialState={
+        pageTitle:'Cadastro de Clientes',
+    }
     const [dataPage, setDataPage] = useState(initialState);
+    const [client, setClient] = useState([
+        {
+            nome: "",
+            email:"",
+            fone:""
+        }
+    ]);
 
     useEffect(()=>{
         setDataPage(dataPage)
-    });
+    }, []);
+
+    useEffect((data)=>{
+        setClient(data);
+    }, []);
+
+    const mensagemCadastro= event=>{
+        return (<Alert variant="success">
+            Cliente cadastrado com sucesso!
+        </Alert>);
+    }
+
+    const changeFields = event =>{
+        setFields({
+            [e.currentTarget.nome]:[e.currentTarget.value]
+        })
+    }
 
     return(
-        <form align="center">
+        <form align="center" method="POST" onSubmit={mensagemCadastro}>
             {/* Cabeçalho */}
             <NavBarApp/>
             <h1 className="hcabecalho" defaultValue={dataPage.pageTitle}></h1>
@@ -34,6 +59,8 @@ const FormClient = (props) =>{
                                         placeholder="Nome"
                                         arial-label="nome"
                                         aerial-describedby="basic-addon1"
+                                        id="nome" 
+                                        //value={client.nome}              
                                     />
                                 </Col>
                             </InputGroup>
@@ -47,6 +74,7 @@ const FormClient = (props) =>{
                                                 arial-label="e-mail"
                                                 aerial-describedby="basic-addon1"
                                                 type="email"
+                                                id="email"
                                         />
                                     </InputGroup.Prepend>                                    
                                 </Col>
@@ -60,11 +88,14 @@ const FormClient = (props) =>{
                                             aerial-describedby="basic-addon1"
                                             type="tel"
                                             pattern="([09]{2})[0-9]{5}-[0-9]{4}"
+                                            id="fone"
                                     />
                                 </Col>
                             </InputGroup>
                         </div>
-                        <ButtonHome variant="primary" title="Cadastrar"/>
+                        <ButtonHome variant="primary" title="Cadastrar" 
+                            onClick={cadastrar(client)}
+                        />
                     </Card.Body>
                 </Card>
 

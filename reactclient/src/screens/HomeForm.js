@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
-import {Card, InputGroup, FormControl, Col, Row, Container} from 'react-bootstrap';
+import {Card, Container} from 'react-bootstrap';
 import './css/style.css';
 
 const initialState={
-    pageTitle:'Cadastro de Clientes',
+    pageTitle:'Home',
 }
 
 
@@ -13,9 +12,9 @@ const HomeForm = (props) =>{
 
     const [dataPage, setDataPage] = useState(initialState);
 
-    useEffect(()=>{
-        setDataPage(dataPage)
-    });
+    // useEffect(()=>{
+    //     setDataPage(dataPage)
+    // }, []);
 
     return(
         <div align="center">
