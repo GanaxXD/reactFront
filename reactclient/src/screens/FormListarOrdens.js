@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
 import NavBarApp from '../components/NavBarApp';
-import TableDataClient from '../components/TalbleDataClient'
+import TableDataOrders from '../components/TableDataOrders';
 
 const FormListarClientes = (props) => {
     return (
         <form>
             <Fragment>
                 <NavBarApp />
-                <TableDataClient />
+                <TableDataOrders />
             </Fragment>
         </form>
     );

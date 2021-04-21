@@ -28,7 +28,11 @@ form{
     background-color: rgb(250, 250, 250);
 }
 
-html, div{
+html > div{
+    background-color: rgb(250, 250, 250);
+}
+
+html {
     background-color: rgb(250, 250, 250);
 }
 
@@ -37,9 +41,19 @@ html, div{
     width: auto;
     align-self: center;
     background-color: white;
+    padding-bottom: 50px;
+    padding-top: 50px;
 }
 
 .inputSpace{
     margin: 20px;
     padding-left: auto;
+}
+
+.cardTitle{
+    background-color: white;
+}
+
+div > a {
+    background-color:#343a40 ;
 }
