@@ -5,9 +5,10 @@ const NavBarApp = ()=>{
     return(
         <Fragment>
             <div margin-top = "5px">
-                <Navbar bg="dark" expand="lg" variant="dark" className="mr-auto">
-                    <Navbar.Brand href="/" font-color="white">CADASTRO DE CLIENTES E ORDENS DE SERVIÇO</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+
+                <Navbar expand="lg" bg="dark" variant="dark">
+                    <Navbar.Brand href="/">CADASTRO DE CLIENTES E ORDENS DE SERVIÇO</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav"></Navbar.Toggle>
                     <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="/clientes">Cadastrar Cliente</Nav.Link>
@@ -18,6 +19,7 @@ const NavBarApp = ()=>{
                     </Nav>
                     </Navbar.Collapse>
                 </Navbar>
+
             </div>
         </Fragment>
     );
