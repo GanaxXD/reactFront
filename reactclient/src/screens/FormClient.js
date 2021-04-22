@@ -5,20 +5,22 @@ import {Card, InputGroup, FormControl, Col, Alert, Container} from 'react-bootst
 import './css/style.css';
 
 async function cadastrar(client){
-    let data = fetch('https://api-client-serviceorder.herokuapp.com/clientes')
+    client.json();
+    let data = fetch('https://api-client-serviceorder.herokuapp.com/clientes');
 }
 
 const FormClient = (props) =>{
 
     const initialState={
-        pageTitle:'Cadastro de Clientes',
+        pageTitle:'Cadastro de Clientes'
     }
+
     const [dataPage, setDataPage] = useState(initialState);
     const [client, setClient] = useState([
         {
-            nome: "",
-            email:"",
-            fone:""
+            nome: '',
+            email:'',
+            fone:''
         }
     ]);
 
@@ -31,9 +33,8 @@ const FormClient = (props) =>{
     }, []);
 
     const mensagemCadastro= event=>{
-        return (<Alert variant="success">
-            Cliente cadastrado com sucesso!
-        </Alert>);
+        <Alert variant="success">Cliente cadastrado com sucesso!</Alert>
+        event.preventDefault();
     }
 
     const changeFields = event =>{
@@ -104,7 +105,9 @@ const FormClient = (props) =>{
 
             {/* Footer */}
             <hr/>
-            <ButtonHome variant="outline-dark" link="/" title="Voltar Para a Página Inicial"/>
+            <ButtonHome variant="outline-dark" link="/" 
+                title="Voltar Para a Página Inicial" onSubmit={cadastrar(client)}
+            />
         </form>
     );
 }
