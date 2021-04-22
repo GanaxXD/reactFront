@@ -42,6 +42,11 @@ const TableDataClient = (props)=>{
             <Card className="cardAppCustomized">
                 <Card.Title className="cardTitle">Clientes Cadastrados</Card.Title>
                 <Card.Body>
+                    <Card.Text><p className="anuncio">O registro desta operação 
+                        no banco de dados disponível no <i>Heroku</i> (plataforma 
+                        on-line onde a API está disponível) pode variar, conforme 
+                        o pacote de serviços adiquirido na disponibilização dos serviços.</p>
+                    </Card.Text>
                 {
                         !clientes ? <h2>Carregando...</h2> :
                     

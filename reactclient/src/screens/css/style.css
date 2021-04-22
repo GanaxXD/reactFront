@@ -53,6 +53,11 @@ html {
     background-color: white;
 }
 
+.anuncio{
+    font-size: 10px;
+    color: red;
+}
+
 div > a {
     background-color:#343a40 ;
 }

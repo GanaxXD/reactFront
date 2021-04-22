@@ -5,8 +5,12 @@ import {Card, InputGroup, FormControl, Col, Alert, Container} from 'react-bootst
 import './css/style.css';
 
 async function cadastrar(client){
-    client.json();
-    let data = fetch('https://api-client-serviceorder.herokuapp.com/clientes');
+    let data = fetch('https://api-client-serviceorder.herokuapp.com/clientes',
+        {
+            method: "POST",
+            body: client
+        }
+    );
 }
 
 const FormClient = (props) =>{
@@ -15,14 +19,14 @@ const FormClient = (props) =>{
         pageTitle:'Cadastro de Clientes'
     }
 
+    const initialClient = {
+        nome : '',
+        email: '',
+        fone : ''
+    }
+
     const [dataPage, setDataPage] = useState(initialState);
-    const [client, setClient] = useState([
-        {
-            nome: '',
-            email:'',
-            fone:''
-        }
-    ]);
+    const [client, setClient] = useState(initialClient);
 
     useEffect(()=>{
         setDataPage(dataPage)
@@ -38,8 +42,8 @@ const FormClient = (props) =>{
     }
 
     const changeFields = event =>{
-        setFields({
-            [e.currentTarget.nome]:[e.currentTarget.value]
+        setClient({
+            [event.currentTarget.name]:[event.currentTarget.value]
         })
     }
 
@@ -47,21 +51,26 @@ const FormClient = (props) =>{
         <form align="center" method="POST" onSubmit={mensagemCadastro}>
             {/* Cabeçalho */}
             <NavBarApp/>
-            <h1 className="hcabecalho" defaultValue={dataPage.pageTitle}></h1>
+            <h1 className="hcabecalho">{dataPage.pageTitle}</h1>
             
             {/* Formulário */}
             <Container fluid="xl" >
                 <Card className="cardAppCustomized">
                     <Card.Body>
                         <div>
+                            <Card.Text><p className="anuncio">A veocidade de conexão com o servidor é definido 
+                                de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
+                                (plataforma on-line onde a API está disponível)
+                            </p></Card.Text>
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">
                                     <FormControl 
                                         placeholder="Nome"
                                         arial-label="nome"
                                         aerial-describedby="basic-addon1"
-                                        id="nome" 
-                                        //value={client.nome}              
+                                        name="nome" 
+                                        onChange={changeFields}
+                                        value={client.nome}             
                                     />
                                 </Col>
                             </InputGroup>
@@ -75,7 +84,9 @@ const FormClient = (props) =>{
                                                 arial-label="e-mail"
                                                 aerial-describedby="basic-addon1"
                                                 type="email"
-                                                id="email"
+                                                name="email"
+                                                onChange={changeFields} 
+                                                value={client.email}
                                         />
                                     </InputGroup.Prepend>                                    
                                 </Col>
@@ -89,7 +100,9 @@ const FormClient = (props) =>{
                                             aerial-describedby="basic-addon1"
                                             type="tel"
                                             pattern="([09]{2})[0-9]{5}-[0-9]{4}"
-                                            id="fone"
+                                            name="fone"
+                                            onChange={changeFields}
+                                            value={client.fone}
                                     />
                                 </Col>
                             </InputGroup>

@@ -13,6 +13,10 @@ const FormOrdemServico = (props) => {
             <Container fluid="xl">
                 <Card className="cardAppCustomized">
                     <Card.Body>
+                        <Card.Text><p className="anuncio">A veocidade de conexão com o servidor é definido 
+                                de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
+                                (plataforma on-line onde a API está disponível)</p>
+                        </Card.Text>
                         <InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text id="basic-addon1">Cliente</InputGroup.Text>
@@ -22,6 +26,7 @@ const FormOrdemServico = (props) => {
                                 aria-label="Id do Cliente"
                                 aria-describedby="basic-addon1"
                                 type="number"
+                                name="clienteId"
                             />
                         </InputGroup>
 
@@ -34,6 +39,7 @@ const FormOrdemServico = (props) => {
                                 aria-label="descrição da ordem de serviço"
                                 aria-describedby="basic-addon1"
                                 type="text"
+                                name="descricao"
                             />
                         </InputGroup>
 
@@ -46,6 +52,7 @@ const FormOrdemServico = (props) => {
                                 aria-label="Valor da Ordem de Serviço"
                                 aria-describedby="basic-addon1"
                                 type="number"
+                                name="preco"
                             />
                         </InputGroup>
                         <br />
