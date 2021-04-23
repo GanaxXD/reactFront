@@ -4,28 +4,32 @@ import ButtonHome from '../components/ButtonHome';
 import {Link} from 'react-router-dom';
 
 let maxClients = 0;
+let loading = true;
 
 async function getAllClients(){
     let data = await fetch('https://api-client-serviceorder.herokuapp.com/clientes')
-    let result = data.json();
-    //maxClients = data.count;
+    let result = await data.json();
+    maxClients = result.length;
     return result;
 }
 
 const TableDataClient = (props)=>{
     
-    let loading = false;
+    
     //state
-    const [clientes, setClient]=useState([]);
+    const [clientes, setClient] = useState([]);
 
     //criando lifecycle
     useEffect(()=>{
-        loading = true;
-        getAllClients().then(data=>{
-            setClient(data);
-            loading = false;
-        })
-    }, []);
+        if (!clientes.length) {
+            getAllClients().then(data=>{
+                setClient(data);
+                loading = false;
+                console.log('depois do get', loading);
+            });
+        }
+        
+    }, [clientes]);
 
     return(
         <Fragment>
@@ -33,13 +37,13 @@ const TableDataClient = (props)=>{
             <Card className="cardAppCustomized">
                 <Card.Title className="cardTitle">Clientes Cadastrados</Card.Title>
                 <Card.Body>
-                    <Card.Text><p className="anuncio">O registro desta operação 
+                    <Card.Text className="anuncio">O registro desta operação 
                         no banco de dados disponível no <i>Heroku</i> (plataforma 
                         on-line onde a API está disponível) pode variar, conforme 
-                        o pacote de serviços adiquirido na disponibilização dos serviços.</p>
+                        o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
                     {
-                        loading == true ?
+                        !loading ?
                             <div className="carregandoDados">
                                 <h4>Carregando...</h4>
                                 <Spinner animation="grow" size="sm"/>
@@ -77,13 +81,13 @@ const TableDataClient = (props)=>{
                     </Table>
 
                     }
-                    {/* <Card.Footer>
+                    <Card.Footer>
                         {
-                            loading == true ?
+                            loading ?
                             <Spinner animation="grow" size="sm"></Spinner>
                            : `Número de Clientes Cadastrados: ${maxClients}`
                         }                       
-                    </Card.Footer> */}
+                    </Card.Footer>
 
                 </Card.Body>
             </Card>

@@ -1,16 +1,35 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
 import {Card, InputGroup, FormControl, Col, Alert, Container} from 'react-bootstrap';
 import './css/style.css';
 
+let statusRequest;
 async function cadastrar(client){
-    let data = fetch('https://api-client-serviceorder.herokuapp.com/clientes',
-        {
-            method: "POST",
-            body: client
-        }
-    );
+    // client = JSON.stringify(client);
+    // console.log('dentro do cadastro', client)
+    // const result = await fetch('https://api-client-serviceorder.herokuapp.com/clientes',
+    //     {
+    //         method: "POST",
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json' 
+    //         },
+    //         body: client
+    //     }
+    // );
+
+    // console.log(result);
+
+    axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client);
+    // .then( data => {
+    //     statusRequest = data.status;
+    //     console.log(data.status);
+    // }).catch( error => {
+    //     statusRequest = error.status;
+    //     console.log(error.status);
+    // });
 }
 
 const FormClient = (props) =>{
@@ -29,11 +48,8 @@ const FormClient = (props) =>{
     const [client, setClient] = useState(initialClient);
 
     useEffect(()=>{
+        console.log(client);
         setDataPage(dataPage)
-    }, []);
-
-    useEffect((data)=>{
-        setClient(data);
     }, []);
 
     const mensagemCadastro= event=>{
@@ -43,8 +59,9 @@ const FormClient = (props) =>{
 
     const changeFields = event =>{
         setClient({
-            [event.currentTarget.name]:[event.currentTarget.value]
+            ...client, [event.currentTarget.name]:event.currentTarget.value
         })
+        console.log(client)
     }
 
     return(
@@ -58,10 +75,10 @@ const FormClient = (props) =>{
                 <Card className="cardAppCustomized">
                     <Card.Body>
                         <div>
-                            <Card.Text><p className="anuncio">A veocidade de conexão com o servidor é definido 
+                            <Card.Text className="anuncio">A veocidade de conexão com o servidor é definido 
                                 de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
                                 (plataforma on-line onde a API está disponível)
-                            </p></Card.Text>
+                            </Card.Text>
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">
                                     <FormControl 
@@ -70,7 +87,7 @@ const FormClient = (props) =>{
                                         aerial-describedby="basic-addon1"
                                         name="nome" 
                                         onChange={changeFields}
-                                        value={client.nome}             
+                                        value={client?.nome}             
                                     />
                                 </Col>
                             </InputGroup>
@@ -86,7 +103,7 @@ const FormClient = (props) =>{
                                                 type="email"
                                                 name="email"
                                                 onChange={changeFields} 
-                                                value={client.email}
+                                                value={client?.email}
                                         />
                                     </InputGroup.Prepend>                                    
                                 </Col>
@@ -102,13 +119,13 @@ const FormClient = (props) =>{
                                             pattern="([09]{2})[0-9]{5}-[0-9]{4}"
                                             name="fone"
                                             onChange={changeFields}
-                                            value={client.fone}
+                                            value={client?.fone}
                                     />
                                 </Col>
                             </InputGroup>
                         </div>
                         <ButtonHome variant="primary" title="Cadastrar" 
-                            onClick={cadastrar(client)}
+                            onClick={() => cadastrar(client)}
                         />
                     </Card.Body>
                 </Card>
@@ -119,8 +136,7 @@ const FormClient = (props) =>{
             {/* Footer */}
             <hr/>
             <ButtonHome variant="outline-dark" link="/" 
-                title="Voltar Para a Página Inicial" onSubmit={cadastrar(client)}
-            />
+                title="Voltar Para a Página Inicial"/>
         </form>
     );
 }
