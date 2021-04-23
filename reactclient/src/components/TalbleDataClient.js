@@ -1,38 +1,29 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import {Table, Card} from 'react-bootstrap';
+import {Table, Card, ProgressBar, Spinner} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import {Link} from 'react-router-dom';
 
+let maxClients = 0;
+
 async function getAllClients(){
-    let data = await fetch('https://api-client-serviceorder.herokuapp.com/clientes');
+    let data = await fetch('https://api-client-serviceorder.herokuapp.com/clientes')
     let result = data.json();
+    //maxClients = data.count;
     return result;
 }
 
 const TableDataClient = (props)=>{
     
-    // const n=[
-    //     {
-    //         id:"1",
-    //         nome: "Pedro",
-    //         email: "p@gmail.com",
-    //         telefone: "98 999-5688"
-    //     },
-    //     {
-    //         id:"2",
-    //         nome: "Guilherme",
-    //         email: "g@gmail.com",
-    //         telefone: "98 659-5688"
-    //     }
-    // ]
-    
+    let loading = false;
     //state
     const [clientes, setClient]=useState([]);
 
     //criando lifecycle
     useEffect(()=>{
+        loading = true;
         getAllClients().then(data=>{
             setClient(data);
+            loading = false;
         })
     }, []);
 
@@ -47,8 +38,16 @@ const TableDataClient = (props)=>{
                         on-line onde a API está disponível) pode variar, conforme 
                         o pacote de serviços adiquirido na disponibilização dos serviços.</p>
                     </Card.Text>
-                {
-                        !clientes ? <h2>Carregando...</h2> :
+                    {
+                        loading == true ?
+                            <div className="carregandoDados">
+                                <h4>Carregando...</h4>
+                                <Spinner animation="grow" size="sm"/>
+                                <p>Estamos carregando os dados do servidor   
+                                     <i>Heroku</i>.
+                                </p>
+                            </div> 
+                        :
                     
                     <Table responsive striped bordered hover variant="dark" size="sm">
                         <thead>
@@ -76,7 +75,16 @@ const TableDataClient = (props)=>{
                             }
                         </tbody>
                     </Table>
+
                     }
+                    {/* <Card.Footer>
+                        {
+                            loading == true ?
+                            <Spinner animation="grow" size="sm"></Spinner>
+                           : `Número de Clientes Cadastrados: ${maxClients}`
+                        }                       
+                    </Card.Footer> */}
+
                 </Card.Body>
             </Card>
              {/* Footer */}

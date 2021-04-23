@@ -58,6 +58,16 @@ html {
     color: red;
 }
 
+.carregandoDados{
+    color: rgb(65, 14, 154);
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.carregandoComentarios{
+    width: auto;
+    height: auto;
+}
+
 div > a {
     background-color:#343a40 ;
 }
