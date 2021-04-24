@@ -10,7 +10,7 @@ let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
 async function getAllClients(){
     let data = await axios(baseLink);
     let result = await data.json(); //teste
-    maxClients = result.length;
+    maxClients = result.length; //teste
     return result;
 }
 
