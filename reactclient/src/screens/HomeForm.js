@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import NavBarApp from '../components/NavBarApp';
 import {Card, Container} from 'react-bootstrap';
 import './css/style.css';
 
-const initialState={
-    pageTitle:'Home',
-}
 
-
-const HomeForm = (props) =>{
-
-    const [dataPage, setDataPage] = useState(initialState);
-
-    // useEffect(()=>{
-    //     setDataPage(dataPage)
-    // }, []);
-
+const HomeForm = () =>{
     return(
         <div align="center">
             {/* Cabeçalho */}
-            <NavBarApp/>
-            <h1 className="hcabecalho" defaultValue={dataPage.pageTitle}></h1>
-            
+            <NavBarApp/>            
             {/* Formulário */}
             <Container fluid="xl" >
                 <Card className="cardAppCustomized" bg="light" border="secondary">

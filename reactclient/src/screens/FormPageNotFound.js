@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import {Card} from 'react-bootstrap';
 import NavBarApp from '../components/NavBarApp';
 

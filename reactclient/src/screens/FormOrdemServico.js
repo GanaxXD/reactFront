@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Card, InputGroup, FormControl, Container } from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
 
-const FormOrdemServico = (props) => {
+const FormOrdemServico = () => {
 
     return (
         <form>
@@ -13,9 +13,9 @@ const FormOrdemServico = (props) => {
             <Container fluid="xl">
                 <Card className="cardAppCustomized">
                     <Card.Body>
-                        <Card.Text><p className="anuncio">A veocidade de conexão com o servidor é definido 
+                        <Card.Text className="anuncio">A veocidade de conexão com o servidor é definido 
                                 de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
-                                (plataforma on-line onde a API está disponível)</p>
+                                (plataforma on-line onde a API está disponível)
                         </Card.Text>
                         <InputGroup className="mb-3">
                             <InputGroup.Prepend>
@@ -56,7 +56,7 @@ const FormOrdemServico = (props) => {
                             />
                         </InputGroup>
                         <br />
-                        <ButtonHome title="Cadastrar" variant="primary" />
+                        <ButtonHome title="Cadastrar" variant="primary" onClick={()=>null}/>
                     </Card.Body>
                 </Card>
 

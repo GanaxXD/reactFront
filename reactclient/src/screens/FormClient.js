@@ -7,32 +7,20 @@ import './css/style.css';
 
 let statusRequest;
 async function cadastrar(client){
-    // client = JSON.stringify(client);
-    // console.log('dentro do cadastro', client)
-    // const result = await fetch('https://api-client-serviceorder.herokuapp.com/clientes',
-    //     {
-    //         method: "POST",
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json' 
-    //         },
-    //         body: client
-    //     }
-    // );
-
-    // console.log(result);
-
-    axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client);
-    // .then( data => {
-    //     statusRequest = data.status;
-    //     console.log(data.status);
-    // }).catch( error => {
-    //     statusRequest = error.status;
-    //     console.log(error.status);
-    // });
+    axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
+    .then( data => {
+        statusRequest = data.status;
+        return <Alert variant="success">Cliente cadastrado com sucesso!</Alert>;
+    }).catch( error => {
+        statusRequest = error.status;
+        return <Alert variant="danger">
+            Erro ao cadastrar o cliente. O erro {statusRequest}
+            foi retornado.        
+        </Alert>;
+    });
 }
 
-const FormClient = (props) =>{
+const FormClient = () =>{
 
     const initialState={
         pageTitle:'Cadastro de Clientes'
@@ -48,24 +36,18 @@ const FormClient = (props) =>{
     const [client, setClient] = useState(initialClient);
 
     useEffect(()=>{
-        console.log(client);
         setDataPage(dataPage)
-    }, []);
+    }, [client]);
 
-    const mensagemCadastro= event=>{
-        <Alert variant="success">Cliente cadastrado com sucesso!</Alert>
-        event.preventDefault();
-    }
-
+    //Criando o novo cliente, adicionando os campos no objeto/array
     const changeFields = event =>{
         setClient({
             ...client, [event.currentTarget.name]:event.currentTarget.value
         })
-        console.log(client)
     }
 
     return(
-        <form align="center" method="POST" onSubmit={mensagemCadastro}>
+        <form align="center" method="POST">
             {/* Cabeçalho */}
             <NavBarApp/>
             <h1 className="hcabecalho">{dataPage.pageTitle}</h1>

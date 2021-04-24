@@ -1,50 +1,54 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import {Table, Card, ProgressBar, Spinner} from 'react-bootstrap';
+import {Table, Card, Spinner} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
-import {Link} from 'react-router-dom'; 
+import axios from 'axios';
 
 let maxOrders = 0;
 let maxComments = 0;
+let loading = false;
+let loadingComments = false;
+let baseLinkOrders = 'https://api-client-serviceorder.herokuapp.com/ordemservico';
 
 async function getAllOrders(){
-    let data = await fetch('https://api-client-serviceorder.herokuapp.com/ordemservico');
-    maxOrders = data.length;
-    let result = data.json();
+    let data = await axios(baseLinkOrders);
+    let result = await data.json();
+    maxOrders = result.length;
     return result;
 }
 
 async function getAllComments(id_chamado){
-    let data = await fetch(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id_chamado}/comentario`);
-    maxComments = data.length;
-    let result = data.json();
+    let data = await axios(`${baseLinkOrders}/${id_chamado}/comentario`);
+    let result = await data.json();
+    maxComments = result.length;
     return result;
 }
 
-const TableDataOrders = (props)=>{
+const TableDataOrders = ()=>{
     
     //state
     const [orders, setOrder]=useState([]);
-    const [comments, setComment] = useState([]);
-
-    let loading = false;
-    let loadingComments = false;
+    const [comments, setComment]=useState([]);
 
     //criando lifecycle
     useEffect(()=>{
         loading = true;
-        getAllOrders().then(data=>{
-            setOrder(data);
-            loading = false;
-        })
-    }, []);
+        if(!orders.length){
+            getAllOrders().then(data=>{
+                setOrder(data);
+                loading = false;
+            })
+        }
+    }, [orders]);
 
     useEffect(()=>{
         loadingComments = true;
-        getAllComments('id_ordem').then(data=>{
-            setComment(data);
-            loadingComments = false;
-        })
-    }, []);
+        if(!comments.length){
+            getAllComments('id_ordem').then(data=>{
+                setComment(data);
+                loadingComments = false;
+            })
+        }
+    }, [comments]);
     
     return(
         <Fragment>
@@ -52,14 +56,14 @@ const TableDataOrders = (props)=>{
             <Card className="cardAppCustomized">
                 <Card.Title className="cardTitle">Ordens de Serviços</Card.Title>
                 <Card.Body>
-                    <Card.Text><p className="anuncio">O registro desta operação 
+                    <Card.Text className="anuncio">O registro desta operação 
                         no banco de dados disponível no <i>Heroku</i> (plataforma 
                         on-line onde a API está disponível) pode variar, conforme 
-                        o pacote de serviços adiquirido na disponibilização dos serviços.</p>
+                        o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
                     {
 
-                        loading == true ? 
+                        loading === true ? 
                         
                         <div className="progresso">
                             <h4>Carregando...</h4>
@@ -92,16 +96,15 @@ const TableDataOrders = (props)=>{
                                         <td>{data.cliente.nome}</td>
                                         <td>{data.descricao}</td>
                                         <td>{data.dataAbetura}</td>
-                                        <td>{!data.dataFinalizacao?"--":data.dataFinalizacao}</td>
+                                        <td>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
                                         <td>{data.status}</td>
-                                        <td><a as={Link} to="/comentario/${data.id}">Comentários ({
-                                                loadingComments == true ?
-                                                    <ProgressBar animated 
-                                                        className="carregandoComentarios"/> 
+                                        <td><a href="${baseLinkOrders}/comentario/${data.id}">Comentários ({
+                                                loadingComments ?
+                                                    <Spinner animation="grow" size="sm"/> 
                                                 : maxComments
                                             })</a></td>
-                                        <td><a as={Link} to="/editarOrdem/${data.id}">Editar</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
-                                        <td><a as={Link} to="/editarOrdem/${data.id}">Excluir</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
+                                        <td><a href="${baseLinkOrders}/editarOrdem/${data.id}">Editar</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
+                                        <td><a href="${baseLinkOrders}/editarOrdem/${data.id}">Excluir</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
                                     </tr>
                                 )
                             }
@@ -110,13 +113,13 @@ const TableDataOrders = (props)=>{
 
                     }
                 </Card.Body>
-                {/* <Card.Footer>
+                <Card.Footer>
                     {
-                        loading == true ?
+                        loading?
                         <Spinner animation="grow" size="sm"></Spinner>
                         : `Número de Ordens de Serviço Cadastradas: ${maxOrders}`
                     }                       
-                </Card.Footer> */}
+                </Card.Footer>
             </Card>
              {/* Footer */}
              <hr/>

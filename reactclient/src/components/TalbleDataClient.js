@@ -1,19 +1,20 @@
+import axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
-import {Table, Card, ProgressBar, Spinner} from 'react-bootstrap';
+import {Table, Card, Spinner} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
-import {Link} from 'react-router-dom';
 
 let maxClients = 0;
 let loading = true;
+let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
 
 async function getAllClients(){
-    let data = await fetch('https://api-client-serviceorder.herokuapp.com/clientes')
+    let data = await axios(baseLink);
     let result = await data.json();
     maxClients = result.length;
     return result;
 }
 
-const TableDataClient = (props)=>{
+const TableDataClient = ()=>{
     
     
     //state
@@ -25,7 +26,6 @@ const TableDataClient = (props)=>{
             getAllClients().then(data=>{
                 setClient(data);
                 loading = false;
-                console.log('depois do get', loading);
             });
         }
         
@@ -43,7 +43,7 @@ const TableDataClient = (props)=>{
                         o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
                     {
-                        !loading ?
+                        loading ?
                             <div className="carregandoDados">
                                 <h4>Carregando...</h4>
                                 <Spinner animation="grow" size="sm"/>
@@ -72,8 +72,8 @@ const TableDataClient = (props)=>{
                                         <td>{data.nome}</td>
                                         <td>{data.email}</td>
                                         <td>{data.fone}</td>
-                                        <td><a as={Link} to="/editarcliente/${data.id}">Editar</a></td>
-                                        <td><a as={Link} to="/editarcliente/${data.id}">Excluir</a></td>
+                                        <td><a href="{baseLink}/editarcliente/${data.id}">Editar</a></td>
+                                        <td><a href="{baseLink}/editarcliente/${data.id}">Excluir</a></td>
                                     </tr>
                                 )
                             }
