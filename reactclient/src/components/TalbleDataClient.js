@@ -11,7 +11,7 @@ async function getAllClients(){
     let data = await axios(baseLink);
     let result = await data.json(); //teste
     maxClients = result.length; //teste
-    return result;
+    return result;//teste
 }
 
 const TableDataClient = ()=>{
