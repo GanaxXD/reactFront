@@ -12,7 +12,7 @@ async function getAllClients(){
     let result = await data.json(); //teste
     maxClients = result.length; //teste
     return result;//teste
-}
+} //teste
 
 const TableDataClient = ()=>{
     
