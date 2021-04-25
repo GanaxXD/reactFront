@@ -6,19 +6,39 @@ import {Card, InputGroup, FormControl, Col, Alert, Container} from 'react-bootst
 import './css/style.css';
 
 let statusRequest;
+let mensagem;
+
 async function cadastrar(client){
     axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
     .then( data => {
         statusRequest = data.status;
-        return <Alert variant="success">Cliente cadastrado com sucesso!</Alert>;
+        <Alert show variant="success">Cliente cadastrado com sucesso!</Alert>;
     }).catch( error => {
         statusRequest = error.status;
-        return <Alert variant="danger">
-            Erro ao cadastrar o cliente. O erro {statusRequest}
-            foi retornado.        
+        mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
+        foi retornado.`;
+        //mensagemDeResposta("danger", mensagem, statusRequest);
+        // return 
+        <Alert show={true} variant="danger">
+             Erro ao cadastrar o cliente. O erro {statusRequest}
+             foi retornado.        
         </Alert>;
     });
 }
+
+// function mensagemDeResposta(variant, mensagem, status){
+//     console.log("Entrei aqui");
+//    <Alert variant={variant} show="true" transition="fade">
+//            {
+//                variant == "danger" ? 
+//                <Alert.Heading>Ah, droga! Ocorreu um erro ({status})!</Alert.Heading>
+//                :
+//                <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
+//            }
+//             <hr/>
+//             {mensagem}
+//         </Alert>
+// }
 
 const FormClient = () =>{
 
@@ -34,6 +54,7 @@ const FormClient = () =>{
 
     const [dataPage, setDataPage] = useState(initialState);
     const [client, setClient] = useState(initialClient);
+    // const [show, setShow] = useState(true);
 
     useEffect(()=>{
         setDataPage(dataPage)
@@ -43,11 +64,25 @@ const FormClient = () =>{
     const changeFields = event =>{
         setClient({
             ...client, [event.currentTarget.name]:event.currentTarget.value
-        })
+        });
+        console.log(client);
     }
 
+    // const mensagemDeResposta = (variant, mensagem, status) =>{
+    //     <Alert variant="danger" show={setShow(true)} onClick={()=>setShow(false)} transition="fade">
+    //         {
+    //             variant == "danger" ? 
+    //             <Alert.Heading>Ah, droga! Ocorreu um erro (400)!</Alert.Heading>
+    //             :
+    //             <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
+    //         }
+    //         <hr/>
+    //         {mensagem}
+    //     </Alert>;
+    // }
+
     return(
-        <form align="center" method="POST">
+        <form align="center" method="POST" onSubmit={()=>cadastrar(client)}>
             {/* Cabeçalho */}
             <NavBarApp/>
             <h1 className="hcabecalho">{dataPage.pageTitle}</h1>
@@ -108,6 +143,7 @@ const FormClient = () =>{
                         </div>
                         <ButtonHome variant="primary" title="Cadastrar" 
                             onClick={() => cadastrar(client)}
+                            // 
                         />
                     </Card.Body>
                 </Card>

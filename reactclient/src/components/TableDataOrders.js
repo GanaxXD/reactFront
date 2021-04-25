@@ -5,21 +5,24 @@ import axios from 'axios';
 
 let maxOrders = 0;
 let maxComments = 0;
-let loading = false;
-let loadingComments = false;
+let loading = true;
+let loadingComments = true;
 let baseLinkOrders = 'https://api-client-serviceorder.herokuapp.com/ordemservico';
 
 async function getAllOrders(){
     let data = await axios(baseLinkOrders);
-    let result = await data.json();
+    let result = data.data;
     maxOrders = result.length;
+    loading = false;
     return result;
 }
 
 async function getAllComments(id_chamado){
     let data = await axios(`${baseLinkOrders}/${id_chamado}/comentario`);
-    let result = await data.json();
+    let result = data.data;
     maxComments = result.length;
+    loadingComments = false;
+    console.log(result);
     return result;
 }
 
@@ -31,24 +34,22 @@ const TableDataOrders = ()=>{
 
     //criando lifecycle
     useEffect(()=>{
-        loading = true;
         if(!orders.length){
             getAllOrders().then(data=>{
                 setOrder(data);
                 loading = false;
             })
         }
-    }, [orders]);
+    }, [orders, loading]);
 
     useEffect(()=>{
-        loadingComments = true;
         if(!comments.length){
             getAllComments('id_ordem').then(data=>{
                 setComment(data);
                 loadingComments = false;
             })
         }
-    }, [comments]);
+    }, [comments, loadingComments]);
     
     return(
         <Fragment>
@@ -63,7 +64,7 @@ const TableDataOrders = ()=>{
                     </Card.Text>
                     {
 
-                        loading === true ? 
+                        loading == true ? 
                         
                         <div className="progresso">
                             <h4>Carregando...</h4>
@@ -90,18 +91,19 @@ const TableDataOrders = ()=>{
                         <tbody>
                             {/* Precisa fazer um map no array resultado da base de dados */}
                             {
-                                orders.map((data)=>
+                                orders.map((data, index)=>
                                     <tr>
-                                        <td>{data.id}</td>
-                                        <td>{data.cliente.nome}</td>
-                                        <td>{data.descricao}</td>
-                                        <td>{data.dataAbetura}</td>
-                                        <td>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
-                                        <td>{data.status}</td>
-                                        <td><a href="${baseLinkOrders}/comentario/${data.id}">Comentários ({
-                                                loadingComments ?
-                                                    <Spinner animation="grow" size="sm"/> 
-                                                : maxComments
+                                        <td key={index*2}>{data.id}</td>
+                                        <td key={index*2}>{data.cliente.nome}</td>
+                                        <td key={index*2}>{data.descricao}</td>
+                                        <td key={index*2}>{data.dataAbetura}</td>
+                                        <td key={index*2}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
+                                        <td key={index*2}>{data.status}</td>
+                                        <td key={index*2}><a href="${baseLinkOrders}/comentario/${data.id}">Comentários ({
+                                                // loadingComments ?
+                                                //     <Spinner animation="grow" size="sm"/> 
+                                                // : maxComments
+                                                maxComments
                                             })</a></td>
                                         <td><a href="${baseLinkOrders}/editarOrdem/${data.id}">Editar</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
                                         <td><a href="${baseLinkOrders}/editarOrdem/${data.id}">Excluir</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}

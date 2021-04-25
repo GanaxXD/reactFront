@@ -1,9 +1,29 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import NavBarApp from '../components/NavBarApp';
 import {Card, InputGroup, FormControl, Container} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
+import axios from 'axios';
+
+async function cadastrar (comentario){
+    let data = await axios.post(`https://api-client-serviceorder.herokuapp.com/ordemservico/${comentario.id}/comentario`, comentario);
+    let result = data.data;
+    return result;
+}
 
 const FormCadastrarComentarios = ()=>{
+
+    const initialState = {
+        id: ' ',
+        descricao: ' '   
+    }
+    const [comentario, setComent] = useState(initialState);
+
+    const handdlerChange = event =>{
+        setComent({
+           ...comentario, [event.currentTarget.name]: event.currentTarget.value
+        })
+    }
+
     return(
         <form>
             <Fragment>
@@ -25,6 +45,8 @@ const FormCadastrarComentarios = ()=>{
                                         aria-describedby="basic-addon1"
                                         type="number"
                                         name="id"
+                                        value={comentario?.id}
+                                        onChange={handdlerChange}
                                     />
                                 </InputGroup>
                                 <InputGroup className="mb-3">
@@ -33,10 +55,12 @@ const FormCadastrarComentarios = ()=>{
                                         aria-label="Descrição do comentário"
                                         aria-describedby="basic-addon1"
                                         name="descricao"
+                                        value={comentario?.descricao}
+                                        onChange={handdlerChange}
                                     />
                                 </InputGroup>
 
-                                <ButtonHome variant="primary" title="Cadastrar"/>
+                                <ButtonHome variant="primary" title="Cadastrar" onClick={()=>cadastrar(comentario)}/>
                             </Card.Body>
                         </Card>
                         

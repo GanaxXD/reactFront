@@ -4,32 +4,34 @@ import {Table, Card, Spinner} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 
 let maxClients = 0;
-let loading = true;
 let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
+let loading = true;
 
 async function getAllClients(){
     let data = await axios(baseLink);
-    let result = await data.json(); //teste
-    maxClients = result.length; //teste
-    return result;//teste
-} //teste
+    let result = data['data']; 
+    maxClients = result.length;
+    console.log("result: ", result, "Max Result: ", maxClients);
+    loading = false;
+    console.log(loading);
+    return result;
+} 
 
 const TableDataClient = ()=>{
-    
     
     //state
     const [clientes, setClient] = useState([]);
 
     //criando lifecycle
     useEffect(()=>{
-        if (!clientes.length) {
+        if(!clientes.length){
             getAllClients().then(data=>{
                 setClient(data);
                 loading = false;
             });
         }
         
-    }, [clientes]);
+    }, [clientes, loading]);
 
     return(
         <Fragment>
@@ -43,7 +45,7 @@ const TableDataClient = ()=>{
                         o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
                     {
-                        loading ?
+                        loading == true?
                             <div className="carregandoDados">
                                 <h4>Carregando...</h4>
                                 <Spinner animation="grow" size="sm"/>
@@ -53,7 +55,7 @@ const TableDataClient = ()=>{
                             </div> 
                         :
                     
-                    <Table responsive striped bordered hover variant="dark" size="sm">
+                        <Table responsive striped bordered hover variant="dark" size="sm">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -83,7 +85,7 @@ const TableDataClient = ()=>{
                     }
                     <Card.Footer>
                         {
-                            loading ?
+                            loading === true?
                             <Spinner animation="grow" size="sm"></Spinner>
                            : `Número de Clientes Cadastrados: ${maxClients}`
                         }                       

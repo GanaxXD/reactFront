@@ -1,9 +1,31 @@
-import React from 'react';
+import axios from 'axios';
+import React, {useState } from 'react';
 import { Card, InputGroup, FormControl, Container } from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
 
+async function cadastrar(ordem){
+    let data = await axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
+    let result = data.data;
+    return result;
+
+}
+
 const FormOrdemServico = () => {
+
+    const initialState = {
+        clienteId : '',
+        descricao : '',
+        preco: ''
+    }
+
+    const [ordem, setOrdem] = useState(initialState);
+
+    const handlerOrderChange = event =>{
+        setOrdem({
+            ...ordem, [event.currentTarget.name]: event.currentTarget.value
+        })
+    }
 
     return (
         <form>
@@ -27,6 +49,8 @@ const FormOrdemServico = () => {
                                 aria-describedby="basic-addon1"
                                 type="number"
                                 name="clienteId"
+                                value = {ordem?.clienteId}
+                                onChange={handlerOrderChange}
                             />
                         </InputGroup>
 
@@ -40,6 +64,8 @@ const FormOrdemServico = () => {
                                 aria-describedby="basic-addon1"
                                 type="text"
                                 name="descricao"
+                                value = {ordem?.descricao}
+                                onChange={handlerOrderChange}
                             />
                         </InputGroup>
 
@@ -53,10 +79,12 @@ const FormOrdemServico = () => {
                                 aria-describedby="basic-addon1"
                                 type="number"
                                 name="preco"
+                                value ={ordem?.preco}
+                                onChange={handlerOrderChange}
                             />
                         </InputGroup>
                         <br />
-                        <ButtonHome title="Cadastrar" variant="primary" onClick={()=>null}/>
+                        <ButtonHome title="Cadastrar" variant="primary" onClick={()=>cadastrar(ordem)}/>
                     </Card.Body>
                 </Card>
 
