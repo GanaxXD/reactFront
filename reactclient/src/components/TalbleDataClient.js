@@ -86,7 +86,7 @@ const TableDataClient = ()=>{
                                         <td key={Math.random()*10 + index+3}>{data.email}</td>
                                         <td key={Math.random()*10 + index+4}>{data.fone}</td>
                                         <td key={Math.random()*10 + index+5}><a href="/editarcliente/${data.id}">Editar</a></td>
-                                        <td key={Math.random()*10 + index+6}><p onClick={()=>mensagem()}>Excluir</p>
+                                        <td key={Math.random()*10 + index+6}><p onClick={()=>mensagem()}>Excluir</p> 
                                         </td>
                                     </tr>
                                 )

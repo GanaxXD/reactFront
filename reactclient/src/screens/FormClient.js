@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
-import {Card, InputGroup, FormControl, Col, Alert, Container} from 'react-bootstrap';
+import {Card, InputGroup, FormControl, Col, Alert, Container, Form} from 'react-bootstrap';
 import './css/style.css';
 
 let statusRequest;
@@ -54,6 +54,7 @@ const FormClient = () =>{
 
     const [dataPage, setDataPage] = useState(initialState);
     const [client, setClient] = useState(initialClient);
+    const [validated, setValidated] = useState(false);
     // const [show, setShow] = useState(true);
 
     useEffect(()=>{
@@ -67,6 +68,15 @@ const FormClient = () =>{
         });
         console.log(client);
     }
+
+    //validando o formulário:
+    const handleSubmit = event =>{
+        if(event.currentTarget.checkValidity() == false){
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        setValidated(true);
+    };
 
     // const mensagemDeResposta = (variant, mensagem, status) =>{
     //     <Alert variant="danger" show={setShow(true)} onClick={()=>setShow(false)} transition="fade">
@@ -82,7 +92,7 @@ const FormClient = () =>{
     // }
 
     return(
-        <form align="center" method="POST" onSubmit={()=>cadastrar(client)}>
+        <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
             {/* Cabeçalho */}
             <NavBarApp/>
             <h1 className="hcabecalho">{dataPage.pageTitle}</h1>
@@ -98,52 +108,69 @@ const FormClient = () =>{
                             </Card.Text>
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">
+                                    <Form.Label>Nome do Cliente</Form.Label>
                                     <FormControl 
                                         placeholder="Nome"
                                         arial-label="nome"
                                         aerial-describedby="basic-addon1"
                                         name="nome" 
                                         onChange={changeFields}
-                                        value={client?.nome}             
+                                        value={client?.nome}
+                                        required             
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        Digite um nome.
+                                    </Form.Control.Feedback>
                                 </Col>
                             </InputGroup>
 
-                            <InputGroup className="mb-3, inputSpace">
+                            <Form.Group>
+                                <Form.Label>E-Mail do Cliente</Form.Label>
                                 <Col xl="11">
-                                    <InputGroup.Prepend >
-                                        <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
+                                    <InputGroup className="mb-3, inputSpace" hasValidation>
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+                                        </InputGroup.Prepend>
                                         <FormControl
-                                                placeholder="E-mail"
-                                                arial-label="e-mail"
-                                                aerial-describedby="basic-addon1"
-                                                type="email"
-                                                name="email"
-                                                onChange={changeFields} 
-                                                value={client?.email}
+                                            placeholder="E-mail"
+                                            arial-label="e-mail"
+                                            aerial-describedby="basic-addon1"
+                                            type="email"
+                                            name="email"
+                                            onChange={changeFields} 
+                                            value={client?.email}
+                                            required
                                         />
-                                    </InputGroup.Prepend>                                    
+                                        <Form.Control.Feedback type="invalid">Digite um e-mail.</Form.Control.Feedback>
+                                    </InputGroup>
                                 </Col>
-                            </InputGroup>
+                            </Form.Group>
 
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">
-                                    <FormControl 
-                                            placeholder="Telefone (xx) nnnnn-nnnn"
-                                            arial-label="telefone"
-                                            aerial-describedby="basic-addon1"
-                                            type="tel"
-                                            pattern="([09]{2})[0-9]{5}-[0-9]{4}"
-                                            name="fone"
-                                            onChange={changeFields}
-                                            value={client?.fone}
-                                    />
+                                    <Form.Group>
+                                        <Form.Label>Telefone</Form.Label>
+                                        <FormControl 
+                                                placeholder="Telefone (xx) nnnnn-nnnn"
+                                                arial-label="telefone"
+                                                aerial-describedby="basic-addon1"
+                                                type="tel"
+                                                pattern="([09]{2})[0-9]{5}-[0-9]{4}"
+                                                name="fone"
+                                                onChange={changeFields}
+                                                value={client?.fone}
+                                                required
+                                        />
+                                        <Form.Control.Feedback type="invalid"> 
+                                            Por favor, digite um número de telefone.
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
                                 </Col>
                             </InputGroup>
                         </div>
-                        <ButtonHome variant="primary" title="Cadastrar" 
-                            onClick={() => cadastrar(client)}
-                            // 
+                        <ButtonHome 
+                            variant="primary" title="Cadastrar" 
+                            onClick={() => validated?cadastrar(client): null } type="submit"
                         />
                     </Card.Body>
                 </Card>
@@ -155,7 +182,7 @@ const FormClient = () =>{
             <hr/>
             <ButtonHome variant="outline-dark" link="/" 
                 title="Voltar Para a Página Inicial"/>
-        </form>
+        </Form>
     );
 }
 
