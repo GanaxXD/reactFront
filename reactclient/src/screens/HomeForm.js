@@ -6,7 +6,7 @@ import './css/style.css';
 
 const HomeForm = () =>{
     return(
-        <div align="center">
+        <form align="center">
             {/* Cabeçalho */}
             <NavBarApp/>            
             {/* Formulário */}
@@ -37,7 +37,7 @@ const HomeForm = () =>{
                 </Card>
 
             </Container>
-        </div>
+        </form>
     );
 }
 

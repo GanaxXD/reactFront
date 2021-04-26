@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import {Table, Card, Spinner} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
+import AlertApp from '../components/AlertApp';
 
 let maxClients = 0;
 let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
@@ -16,6 +17,16 @@ async function getAllClients(){
     console.log(loading);
     return result;
 } 
+
+function mensagem(){
+    return(<AlertApp
+        title="Deseja Realmente Excluir o cliente?"
+        variant="danger"
+        message="Você está prestes a excluir o usuário da base de dados. Deseja realmente realizar essa operação?"
+        onClickButtonOk= "null"
+        onClickButtonCancel = "null"
+    />);
+}
 
 const TableDataClient = ()=>{
     
@@ -68,14 +79,15 @@ const TableDataClient = ()=>{
                         <tbody>
                             {/* Precisa fazer um map no array resultado da base de dados */}
                             {
-                                clientes.map((data)=>
+                                clientes.map((data, index)=>
                                     <tr>
-                                        <td>{data.id}</td>
-                                        <td>{data.nome}</td>
-                                        <td>{data.email}</td>
-                                        <td>{data.fone}</td>
-                                        <td><a href="{baseLink}/editarcliente/${data.id}">Editar</a></td>
-                                        <td><a href="{baseLink}/editarcliente/${data.id}">Excluir</a></td>
+                                        <td key={Math.random()*10 + index+1}>{data.id}</td>
+                                        <td key={Math.random()*10 + index+2}>{data.nome}</td>
+                                        <td key={Math.random()*10 + index+3}>{data.email}</td>
+                                        <td key={Math.random()*10 + index+4}>{data.fone}</td>
+                                        <td key={Math.random()*10 + index+5}><a href="/editarcliente/${data.id}">Editar</a></td>
+                                        <td key={Math.random()*10 + index+6}><p onClick={()=>mensagem()}>Excluir</p>
+                                        </td>
                                     </tr>
                                 )
                             }
@@ -96,6 +108,7 @@ const TableDataClient = ()=>{
              {/* Footer */}
              <hr/>
             <ButtonHome variant="outline-dark" link="/" title="Voltar Para a Página Inicial"/>
+            <br/>
         </Fragment>
     );
 }

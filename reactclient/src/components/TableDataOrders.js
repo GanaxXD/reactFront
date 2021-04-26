@@ -93,20 +93,20 @@ const TableDataOrders = ()=>{
                             {
                                 orders.map((data, index)=>
                                     <tr>
-                                        <td key={index*2}>{data.id}</td>
-                                        <td key={index*2}>{data.cliente.nome}</td>
-                                        <td key={index*2}>{data.descricao}</td>
-                                        <td key={index*2}>{data.dataAbetura}</td>
-                                        <td key={index*2}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
-                                        <td key={index*2}>{data.status}</td>
-                                        <td key={index*2}><a href="${baseLinkOrders}/comentario/${data.id}">Comentários ({
+                                        <td key={Date.prototype.getMilliseconds}>{data.id}</td>
+                                        <td key={Date.prototype.getMilliseconds}>{data.cliente.nome}</td>
+                                        <td key={Date.prototype.getMilliseconds}>{data.descricao}</td>
+                                        <td key={Date.prototype.getMilliseconds}>{data.dataAbetura}</td>
+                                        <td key={Date.prototype.getMilliseconds}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
+                                        <td key={Date.prototype.getMilliseconds}>{data.status}</td>
+                                        <td key={Date.prototype.getMilliseconds}><a href="${baseLinkOrders}/comentario/${data.id}">Comentários ({
                                                 // loadingComments ?
                                                 //     <Spinner animation="grow" size="sm"/> 
                                                 // : maxComments
                                                 maxComments
                                             })</a></td>
-                                        <td><a href="${baseLinkOrders}/editarOrdem/${data.id}">Editar</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
-                                        <td><a href="${baseLinkOrders}/editarOrdem/${data.id}">Excluir</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
+                                        <td><a href={`/editarOrdem/${data.id}`}>Editar</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
+                                        <td><a href={`/excluirOrdem/${data.id}`}>Excluir</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
                                     </tr>
                                 )
                             }

@@ -7,6 +7,7 @@ import FormOrdemServico from './screens/FormOrdemServico';
 import FormCadastrarComentarios from './screens/FormCadastrarComentarios';
 import FormListarClientes from './screens/FormListarClientes';
 import FormListarOrdens from './screens/FormListarOrdens';
+import AlertApp from './components/AlertApp';
 
 
 const AppRoutes = ()=>(
@@ -19,6 +20,9 @@ const AppRoutes = ()=>(
             <Route exact path="/listaclientes" component={FormListarClientes}/>
             <Route exact path="/listaordens" component={FormListarOrdens}/>
             <Route exact path="/editarcliente/${data.id}" component={FormListarOrdens}/>
+            <Route exact path="/excluircliente/${data.id}" component={AlertApp}/>
+            <Route exact path="/editarOrdem/${data.id}" component={FormListarOrdens}/>
+            <Route exact path="/excluirOrdem/${data.id}" component={FormListarOrdens}/>
 
             <Route component={FormPageNotFound}/>
         </Switch>
