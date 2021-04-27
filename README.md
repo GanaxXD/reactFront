@@ -9,6 +9,6 @@ disponível no *Heroku*, plataforma *online* (com limitações de velocidade de 
 * React;
 * Axios;
 * React-Bootstrap;
-* React-Router-Dom
+* React-Router-Dom;
 
 #### Em desenvolvimento...
