@@ -2,28 +2,28 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
-import {Card, InputGroup, FormControl, Col, Alert, Container, Form} from 'react-bootstrap';
+import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Button} from 'react-bootstrap';
 import './css/style.css';
 
 let statusRequest;
 let mensagem;
+let variant;
 
 async function cadastrar(client){
     axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
     .then( data => {
         statusRequest = data.status;
-        <Alert show variant="success">Cliente cadastrado com sucesso!</Alert>;
+        variant = "success";
+        mensagem = "O cliente foi cadastrado na base de dados.";
+        //return MensagemDeResposta(variant, mensagem);
     }).catch( error => {
         statusRequest = error.status;
         mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
         foi retornado.`;
-        //mensagemDeResposta("danger", mensagem, statusRequest);
-        // return 
-        <Alert show={true} variant="danger">
-             Erro ao cadastrar o cliente. O erro {statusRequest}
-             foi retornado.        
-        </Alert>;
+        variant="danger";
+        //return MensagemDeResposta(variant, mensagem);
     });
+    //return MensagemDeResposta(variant, mensagem);
 }
 
 // function mensagemDeResposta(variant, mensagem, status){
@@ -40,6 +40,25 @@ async function cadastrar(client){
 //         </Alert>
 // }
 
+function MensagemDeResposta(variant, mensagem){
+    const [show, setShow] = useState(false);
+    if(show){
+        return (
+            <Alert variant={variant} show={setShow(true)} transition="fade" onClose={()=> setShow(false)} dismissible>
+                {
+                    variant == "danger" ? 
+                    <Alert.Heading>Ah, droga! Ocorreu um erro ({statusRequest})!</Alert.Heading>
+                    :
+                    <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
+                }
+                <hr/>
+                <p>{mensagem}</p>
+                <hr/>
+            </Alert>
+        );
+    }
+}
+
 const FormClient = () =>{
 
     const initialState={
@@ -55,10 +74,10 @@ const FormClient = () =>{
     const [dataPage, setDataPage] = useState(initialState);
     const [client, setClient] = useState(initialClient);
     const [validated, setValidated] = useState(false);
-    // const [show, setShow] = useState(true);
+    const [show, setShow] = useState(true);
 
     useEffect(()=>{
-        setDataPage(dataPage)
+        setDataPage(dataPage);
     }, [client]);
 
     //Criando o novo cliente, adicionando os campos no objeto/array
@@ -74,22 +93,23 @@ const FormClient = () =>{
         if(event.currentTarget.checkValidity() == false){
             event.preventDefault();
             event.stopPropagation();
+            
         }
         setValidated(true);
     };
 
-    // const mensagemDeResposta = (variant, mensagem, status) =>{
-    //     <Alert variant="danger" show={setShow(true)} onClick={()=>setShow(false)} transition="fade">
-    //         {
-    //             variant == "danger" ? 
-    //             <Alert.Heading>Ah, droga! Ocorreu um erro (400)!</Alert.Heading>
-    //             :
-    //             <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
-    //         }
-    //         <hr/>
-    //         {mensagem}
-    //     </Alert>;
-    // }
+    const mensagemDeResposta = () =>{
+        return(<Alert variant="danger" show={show} onClick={()=>setShow(false)} transition="fade">
+            {
+                variant == "danger" ? 
+                <Alert.Heading>Ah, droga! Ocorreu um erro (400)!</Alert.Heading>
+                :
+                <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
+            }
+            <hr/>
+            {mensagem}
+        </Alert>);
+    }
 
     return(
         <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
@@ -104,11 +124,12 @@ const FormClient = () =>{
                         <div>
                             <Card.Text className="anuncio">A veocidade de conexão com o servidor é definido 
                                 de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
-                                (plataforma on-line onde a API está disponível)
+                                (plataforma on-line onde a API está disponível), podendo levar um 
+                                tempo considerável (>40')
                             </Card.Text>
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">
-                                    <Form.Label>Nome do Cliente</Form.Label>
+                                    <Form.Label>Nome do Cliente (*)</Form.Label>
                                     <FormControl 
                                         placeholder="Nome"
                                         arial-label="nome"
@@ -125,7 +146,7 @@ const FormClient = () =>{
                             </InputGroup>
 
                             <Form.Group>
-                                <Form.Label>E-Mail do Cliente</Form.Label>
+                                <Form.Label>E-Mail do Cliente (*)</Form.Label>
                                 <Col xl="11">
                                     <InputGroup className="mb-3, inputSpace" hasValidation>
                                         <InputGroup.Prepend>
@@ -146,43 +167,42 @@ const FormClient = () =>{
                                 </Col>
                             </Form.Group>
 
-                            <InputGroup className="mb-3, inputSpace">
+                            <InputGroup className="mb-3, inputSpace" hasValidation>
                                 <Col xl="11">
-                                    <Form.Group>
-                                        <Form.Label>Telefone</Form.Label>
-                                        <FormControl 
-                                                placeholder="Telefone (xx) nnnnn-nnnn"
-                                                arial-label="telefone"
-                                                aerial-describedby="basic-addon1"
-                                                type="tel"
-                                                pattern="([09]{2})[0-9]{5}-[0-9]{4}"
-                                                name="fone"
-                                                onChange={changeFields}
-                                                value={client?.fone}
-                                                required
-                                        />
-                                        <Form.Control.Feedback type="invalid"> 
-                                            Por favor, digite um número de telefone.
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
+                                    <Form.Label>Telefone (*)</Form.Label>
+                                    <FormControl 
+                                            placeholder="Telefone (xx) nnnnn-nnnn"
+                                            arial-label="telefone"
+                                            aerial-describedby="basic-addon1"
+                                            type="tel"
+                                            //pattern="([09]{2})[0-9]{5}-[0-9]{4}"
+                                            name="fone"
+                                            onChange={changeFields}
+                                            value={client?.fone}
+                                            required
+                                    />
+                                    <Form.Control.Feedback type="invalid"> 
+                                        Por favor, digite um número de telefone.
+                                    </Form.Control.Feedback>
                                 </Col>
                             </InputGroup>
                         </div>
+                        <p className="anuncio">Os campos com * são obrigatórios.</p>
                         <ButtonHome 
                             variant="primary" title="Cadastrar" 
-                            onClick={() => validated?cadastrar(client): null } type="submit"
+                            onClick={() => validated ? cadastrar(client) : null } type="submit"
+                            onSubmit={()=>mensagemDeResposta}
                         />
                     </Card.Body>
                 </Card>
-
             </Container>
-
 
             {/* Footer */}
             <hr/>
             <ButtonHome variant="outline-dark" link="/" 
                 title="Voltar Para a Página Inicial"/>
         </Form>
+
     );
 }
 
