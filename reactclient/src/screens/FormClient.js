@@ -66,9 +66,9 @@ const FormClient = () =>{
     }
 
     const initialClient = {
-        nome : '',
-        email: '',
-        fone : ''
+        nome : 'pedro',
+        email: 'pedro@gmail.com',
+        fone : '98 985475585'
     }
 
     const [dataPage, setDataPage] = useState(initialState);
@@ -91,14 +91,16 @@ const FormClient = () =>{
     //validando o formulário:
     const handleSubmit = event =>{
         if(event.currentTarget.checkValidity() == false){
+            document.createElement(<Alert>Oi</Alert>).insertAdjacentElement(<alert>Oi</alert>);
             event.preventDefault();
             event.stopPropagation();
+            
             
         }
         setValidated(true);
     };
 
-    const mensagemDeResposta = () =>{
+    function mensagemDeResposta(){
         return(<Alert variant="danger" show={show} onClick={()=>setShow(false)} transition="fade">
             {
                 variant == "danger" ? 
@@ -190,8 +192,8 @@ const FormClient = () =>{
                         <p className="anuncio">Os campos com * são obrigatórios.</p>
                         <ButtonHome 
                             variant="primary" title="Cadastrar" 
-                            onClick={() => validated ? cadastrar(client) : null } type="submit"
-                            onSubmit={()=>mensagemDeResposta}
+                            onClick={() => mensagemDeResposta() } type="submit"
+                            onSubmit={()=>mensagemDeResposta()}
                         />
                     </Card.Body>
                 </Card>
