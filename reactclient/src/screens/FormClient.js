@@ -15,49 +15,14 @@ async function cadastrar(client){
         statusRequest = data.status;
         variant = "success";
         mensagem = "O cliente foi cadastrado na base de dados.";
-        //return MensagemDeResposta(variant, mensagem);
     }).catch( error => {
         statusRequest = error.status;
         mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
-        foi retornado.`;
+        foi retornado. Detalhes: ${error.error}`;
         variant="danger";
-        //return MensagemDeResposta(variant, mensagem);
     });
-    //return MensagemDeResposta(variant, mensagem);
 }
 
-// function mensagemDeResposta(variant, mensagem, status){
-//     console.log("Entrei aqui");
-//    <Alert variant={variant} show="true" transition="fade">
-//            {
-//                variant == "danger" ? 
-//                <Alert.Heading>Ah, droga! Ocorreu um erro ({status})!</Alert.Heading>
-//                :
-//                <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
-//            }
-//             <hr/>
-//             {mensagem}
-//         </Alert>
-// }
-
-function MensagemDeResposta(variant, mensagem){
-    const [show, setShow] = useState(false);
-    if(show){
-        return (
-            <Alert variant={variant} show={setShow(true)} transition="fade" onClose={()=> setShow(false)} dismissible>
-                {
-                    variant == "danger" ? 
-                    <Alert.Heading>Ah, droga! Ocorreu um erro ({statusRequest})!</Alert.Heading>
-                    :
-                    <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
-                }
-                <hr/>
-                <p>{mensagem}</p>
-                <hr/>
-            </Alert>
-        );
-    }
-}
 
 const FormClient = () =>{
 
@@ -74,43 +39,45 @@ const FormClient = () =>{
     const [dataPage, setDataPage] = useState(initialState);
     const [client, setClient] = useState(initialClient);
     const [validated, setValidated] = useState(false);
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
 
-    useEffect(()=>{
-        setDataPage(dataPage);
-    }, [client]);
+    // useEffect(()=>{
+    //     setDataPage(dataPage);
+    // }, [client]);
 
     //Criando o novo cliente, adicionando os campos no objeto/array
     const changeFields = event =>{
         setClient({
             ...client, [event.currentTarget.name]:event.currentTarget.value
         });
-        console.log(client);
     }
 
     //validando o formulário:
     const handleSubmit = event =>{
+        setShow(true);
         if(event.currentTarget.checkValidity() == false){
-            document.createElement(<Alert>Oi</Alert>).insertAdjacentElement(<alert>Oi</alert>);
             event.preventDefault();
             event.stopPropagation();
-            
-            
         }
         setValidated(true);
+        // event.currentTarget.bubbles(true);
     };
 
-    function mensagemDeResposta(){
-        return(<Alert variant="danger" show={show} onClick={()=>setShow(false)} transition="fade">
-            {
-                variant == "danger" ? 
-                <Alert.Heading>Ah, droga! Ocorreu um erro (400)!</Alert.Heading>
-                :
-                <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
-            }
-            <hr/>
-            {mensagem}
-        </Alert>);
+    function MensagemAlerta(){
+        if(show){
+            return (
+                <Alert variant={variant} show={show} onClick={()=>setShow(false)} transition="fade" dismissible>
+                    {
+                        variant == "danger" ? 
+                        <Alert.Heading>Ah, droga! Ocorreu um erro ({statusRequest})!</Alert.Heading>
+                        :
+                        <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
+                    }
+                    <hr/>
+                    {mensagem}
+                </Alert>
+            );
+        }
     }
 
     return(
@@ -118,6 +85,10 @@ const FormClient = () =>{
             {/* Cabeçalho */}
             <NavBarApp/>
             <h1 className="hcabecalho">{dataPage.pageTitle}</h1>
+             {
+                 show ? 
+                 <MensagemAlerta/> : null
+             }
             
             {/* Formulário */}
             <Container fluid="xl" >
@@ -192,8 +163,8 @@ const FormClient = () =>{
                         <p className="anuncio">Os campos com * são obrigatórios.</p>
                         <ButtonHome 
                             variant="primary" title="Cadastrar" 
-                            onClick={() => mensagemDeResposta() } type="submit"
-                            onSubmit={()=>mensagemDeResposta()}
+                            onClick={() => cadastrar(client)} type="submit"
+                    
                         />
                     </Card.Body>
                 </Card>
