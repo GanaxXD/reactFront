@@ -2,24 +2,28 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
+import AlertApp from '../components/AlertApp';
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Button} from 'react-bootstrap';
 import './css/style.css';
 
-let statusRequest;
-let mensagem;
-let variant;
+let statusRequest = 400;
+let mensagem = 'Testando';
+let variantApp = 'success';
+let titleApp = 'Testando';
 
 async function cadastrar(client){
     axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
     .then( data => {
         statusRequest = data.status;
-        variant = "success";
+        variantApp = "success";
         mensagem = "O cliente foi cadastrado na base de dados.";
+        titleApp = "Cadastrado com sucesso!"
     }).catch( error => {
         statusRequest = error.status;
         mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
         foi retornado. Detalhes: ${error.error}`;
-        variant="danger";
+        variantApp="danger";
+        titleApp = "Ah, que pena. Ocorreu um erro."
     });
 }
 
@@ -41,9 +45,17 @@ const FormClient = () =>{
     const [validated, setValidated] = useState(false);
     const [show, setShow] = useState(false);
 
-    // useEffect(()=>{
-    //     setDataPage(dataPage);
-    // }, [client]);
+    useEffect(()=>{
+        setDataPage(dataPage);
+    }, [client]);
+
+    useEffect(()=>{
+        if(show){
+            setTimeout(()=>{
+                setShow(false);
+            },50000);
+        }
+    }, [show]);
 
     //Criando o novo cliente, adicionando os campos no objeto/array
     const changeFields = event =>{
@@ -54,21 +66,19 @@ const FormClient = () =>{
 
     //validando o formulário:
     const handleSubmit = event =>{
-        setShow(true);
         if(event.currentTarget.checkValidity() == false){
             event.preventDefault();
             event.stopPropagation();
         }
         setValidated(true);
-        // event.currentTarget.bubbles(true);
     };
 
     function MensagemAlerta(){
         if(show){
             return (
-                <Alert variant={variant} show={show} onClick={()=>setShow(false)} transition="fade" dismissible>
+                <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} transition="fade" dismissible>
                     {
-                        variant == "danger" ? 
+                        variantApp == "danger" ? 
                         <Alert.Heading>Ah, droga! Ocorreu um erro ({statusRequest})!</Alert.Heading>
                         :
                         <Alert.Heading>Cliente cadastrado com sucesso!</Alert.Heading>
@@ -87,7 +97,13 @@ const FormClient = () =>{
             <h1 className="hcabecalho">{dataPage.pageTitle}</h1>
              {
                  show ? 
-                 <MensagemAlerta/> : null
+                 <AlertApp
+                    alert_show = {show}
+                    variant = {variantApp}
+                    title = {titleApp}
+                    message = {mensagem}
+                 /> 
+                 : null
              }
             
             {/* Formulário */}
@@ -163,7 +179,7 @@ const FormClient = () =>{
                         <p className="anuncio">Os campos com * são obrigatórios.</p>
                         <ButtonHome 
                             variant="primary" title="Cadastrar" 
-                            onClick={() => cadastrar(client)} type="submit"
+                            onClick={() => cadastrar(client).then(setShow(true))} type="submit"
                     
                         />
                     </Card.Body>

@@ -4,7 +4,7 @@ import ButtonHome from './ButtonHome';
 
 const AlertApp = (props) =>{
 
-    const [show, setShow] = useState(true)
+    const [show, setShow] = useState(props.alert_show)
     //[{
     //     show: false,
     //     onClick: null,
@@ -31,16 +31,16 @@ const AlertApp = (props) =>{
             <hr/>
             <p>{props.message}</p>
             <hr/>
-            <Row>
+            <Row className="d-flex justify-content-end">
                 <ButtonHome
                     variant="outline-dark"
-                    onClick={props.onClickButtonOk}
+                    // onClick={props.onClickButtonOk}
                     title="Excluir"
                 />
-                <p>|</p>
+                {'       '}
                 <ButtonHome
                     variant="outline-success"
-                    onClick={props.onClickButtonCancel}
+                    // onClick={props.onClickButtonCancel}
                     title="Cancelar"
                 />
             </Row>
