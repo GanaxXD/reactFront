@@ -6,22 +6,22 @@ import AlertApp from '../components/AlertApp';
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Button} from 'react-bootstrap';
 import './css/style.css';
 
-let statusRequest = 400;
-let mensagem = 'Testando';
-let variantApp = 'success';
-let titleApp = 'Testando';
+let statusRequest;
+let mensagem;
+let variantApp;
+let titleApp;
 
 async function cadastrar(client){
     let result = await axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
     .then( data => {
-        statusRequest = data.status;
+        statusRequest = data.response.status;
         variantApp = "success";
         mensagem = "O cliente foi cadastrado na base de dados.";
         titleApp = "Cadastrado com sucesso!"
     }).catch( error => {
-        statusRequest = error.status;
+        statusRequest = error.response.status;
         mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
-        foi retornado. Detalhes: ${error.error}`;
+        foi retornado. Detalhes: ${error}`;
         variantApp="danger";
         titleApp = "Ah, que pena. Ocorreu um erro."
     });
