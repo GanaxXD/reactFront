@@ -12,7 +12,7 @@ let variantApp = 'success';
 let titleApp = 'Testando';
 
 async function cadastrar(client){
-    axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
+    let result = await axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
     .then( data => {
         statusRequest = data.status;
         variantApp = "success";
@@ -25,6 +25,7 @@ async function cadastrar(client){
         variantApp="danger";
         titleApp = "Ah, que pena. Ocorreu um erro."
     });
+    return result;
 }
 
 
@@ -40,22 +41,25 @@ const FormClient = () =>{
         fone : '98 985475585'
     }
 
-    const [dataPage, setDataPage] = useState(initialState);
     const [client, setClient] = useState(initialClient);
     const [validated, setValidated] = useState(false);
     const [show, setShow] = useState(false);
 
     useEffect(()=>{
-        setDataPage(dataPage);
-    }, [client]);
-
-    useEffect(()=>{
         if(show){
             setTimeout(()=>{
                 setShow(false);
-            },50000);
+            },5000);
         }
     }, [show]);
+
+    // useEffect(()=>{
+    //     if(show){
+    //         setTimeout(()=>{
+    //             setShow(false);
+    //         },5000);
+    //     }
+    // }, [show]);
 
     //Criando o novo cliente, adicionando os campos no objeto/array
     const changeFields = event =>{
@@ -66,9 +70,10 @@ const FormClient = () =>{
 
     //validando o formulário:
     const handleSubmit = event =>{
-        if(event.currentTarget.checkValidity() == false){
+        if(event.currentTarget.checkValidity() == true){
             event.preventDefault();
             event.stopPropagation();
+            setShow(true);
         }
         setValidated(true);
     };
@@ -76,7 +81,7 @@ const FormClient = () =>{
     function MensagemAlerta(){
         if(show){
             return (
-                <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} transition="fade" dismissible>
+                <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
                     {
                         variantApp == "danger" ? 
                         <Alert.Heading>Ah, droga! Ocorreu um erro ({statusRequest})!</Alert.Heading>
@@ -94,15 +99,16 @@ const FormClient = () =>{
         <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
             {/* Cabeçalho */}
             <NavBarApp/>
-            <h1 className="hcabecalho">{dataPage.pageTitle}</h1>
+            <h1 className="hcabecalho">Cadastro de Clientes</h1>
              {
                  show ? 
-                 <AlertApp
-                    alert_show = {show}
-                    variant = {variantApp}
-                    title = {titleApp}
-                    message = {mensagem}
-                 /> 
+                //  <AlertApp
+                //     alert_show = {show}
+                //     variant = {variantApp}
+                //     title = {titleApp}
+                //     message = {mensagem}
+                //  />
+                <MensagemAlerta/> 
                  : null
              }
             
@@ -179,8 +185,7 @@ const FormClient = () =>{
                         <p className="anuncio">Os campos com * são obrigatórios.</p>
                         <ButtonHome 
                             variant="primary" title="Cadastrar" 
-                            onClick={() => cadastrar(client).then(setShow(true))} type="submit"
-                    
+                            onClick={() => cadastrar(client)} type="submit"
                         />
                     </Card.Body>
                 </Card>

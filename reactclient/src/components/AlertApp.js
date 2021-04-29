@@ -37,7 +37,6 @@ const AlertApp = (props) =>{
                     // onClick={props.onClickButtonOk}
                     title="Excluir"
                 />
-                {'       '}
                 <ButtonHome
                     variant="outline-success"
                     // onClick={props.onClickButtonCancel}
