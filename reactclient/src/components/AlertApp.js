@@ -15,12 +15,10 @@ const AlertApp = (props) =>{
             <Row className="d-flex justify-content-end">
                 <ButtonHome
                     variant="outline-dark"
-                    // onClick={props.onClickButtonOk}
                     title="Excluir"
                 />
                 <ButtonHome
                     variant="outline-success"
-                    // onClick={props.onClickButtonCancel}
                     title="Cancelar"
                 />
             </Row>
