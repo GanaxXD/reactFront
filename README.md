@@ -4,3 +4,4 @@ Desenvolvimento de um sistema *front* que consome os recursos de uma API criada 
 O sistema deverá ser capaz de Cadastrar, Editar e Excluir Clientes e Ordens de Serviço
 
 #### Em desenvolvimento...
+Desenvolvimento do front em andamento.
