@@ -15,6 +15,7 @@ const AlertApp = (props) =>{
             <Row className="d-flex justify-content-end">
                 <ButtonHome
                     variant="outline-dark"
+                    omClick="null"
                     title="Excluir"
                 />
                 <ButtonHome
