@@ -5,17 +5,18 @@ import NavBarApp from '../components/NavBarApp';
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Spinner} from 'react-bootstrap';
 import './css/style.css';
 
-const FormClient = () =>{
-
-    let statusRequest;
+let statusRequest;
     let mensagem;
     let variantApp;
     let titleApp;
+
+const FormClient = () =>{
+
+    
     // let loadingPost = false;
     const [loadingPost, setLoading] = useState(false);
-    
+     
     async function cadastrar(client){
-        setShow(false);
         setLoading(true);
         axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
         .then(data => {
@@ -25,8 +26,7 @@ const FormClient = () =>{
             mensagem = "O cliente foi cadastrado na base de dados."
             titleApp = "Cadastrado com sucesso!"
             setLoading(false);
-        })
-        .catch( function (error) {
+        }).catch( function (error) {
             statusRequest = error.response.data['status']
             mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
             foi retornado. Detalhes: ${error.response.data['titulo']}`
@@ -42,9 +42,12 @@ const FormClient = () =>{
     }
 
     const initialClient = {
-        nome : 'pedro',
-        email: 'pedro@gmail.com',
-        fone : '98 985475585'
+        // nome : 'pedro',
+        // email: 'pedro@gmail.com',
+        // fone : '98 985475585'
+        nome : '',
+        email: '',
+        fone : ''
     }
 
     const [client, setClient] = useState(initialClient);
@@ -52,11 +55,13 @@ const FormClient = () =>{
     const [show, setShow] = useState(false);
 
     useEffect(()=>{
-        if(show && !loadingPost){
+        if(show){
             console.log("Antes do If: Show: ", show, "Loading: ", loadingPost);
+            console.log("mensagem ", mensagem, "Variant: ", variantApp);
             setTimeout(()=>{
                 setShow(false);
-            },10000);
+                setLoading(false);
+            },1000000);
             console.log("Depois di If: Show: ", show, "Loading: ", loadingPost);
         }
     }, [show]);
@@ -70,16 +75,21 @@ const FormClient = () =>{
 
     //validando o formulário:
     const handleSubmit = async function carregar(event){
-        setShow(false);
-        if(event.currentTarget.checkValidity() == true){
+        // setShow(false);
+        if(event.currentTarget.checkValidity() === true){
+            cadastrar(client);
             console.log("AQUI");
-            cadastrar(client).then(response=>{
-                console.log("dentro do client");
-                setShow(true);
-            })
+            console.log(client)
+            // cadastrar(client).then(response=>{
+            //     console.log("dentro do client");
+            //     setShow(true);
+            //     setLoading(false);
+            // });
+            setShow(true);
             event.preventDefault();
         }
         setValidated(true);
+        event.preventDefault();
     };
 
     function MensagemAlerta(){
