@@ -5,18 +5,18 @@ import NavBarApp from '../components/NavBarApp';
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Spinner} from 'react-bootstrap';
 import './css/style.css';
 
-let statusRequest;
-let mensagem;
-let variantApp;
-let titleApp;
-let loadingPost = false;
-
 const FormClient = () =>{
 
+    let statusRequest;
+    let mensagem;
+    let variantApp;
+    let titleApp;
+    // let loadingPost = false;
+    const [loadingPost, setLoading] = useState(false);
     
     async function cadastrar(client){
         setShow(false);
-        loadingPost = true;
+        setLoading(true);
         axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
         .then(data => {
             statusRequest = data.response.data['status']
@@ -24,17 +24,16 @@ const FormClient = () =>{
             variantApp = "success"
             mensagem = "O cliente foi cadastrado na base de dados."
             titleApp = "Cadastrado com sucesso!"
-            loadingPost = false;
+            setLoading(false);
         })
-        .catch( error => {
-            console.log(error.response.data['status'])
+        .catch( function (error) {
             statusRequest = error.response.data['status']
             mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
             foi retornado. Detalhes: ${error.response.data['titulo']}`
             console.log("titulo: ", error.response.data.titulo, "status: ", error.response.data.status)
             variantApp="danger"
             titleApp = `Ah, que pena. Ocorreu um erro!`
-            loadingPost = false;
+            setLoading(false);
         });
     }
 
@@ -54,9 +53,11 @@ const FormClient = () =>{
 
     useEffect(()=>{
         if(show && !loadingPost){
+            console.log("Antes do If: Show: ", show, "Loading: ", loadingPost);
             setTimeout(()=>{
                 setShow(false);
             },10000);
+            console.log("Depois di If: Show: ", show, "Loading: ", loadingPost);
         }
     }, [show]);
 
@@ -82,7 +83,7 @@ const FormClient = () =>{
     };
 
     function MensagemAlerta(){
-        if(show){
+        if(show && !loadingPost){
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
                     <Alert.Heading>{titleApp}</Alert.Heading>
@@ -95,8 +96,9 @@ const FormClient = () =>{
     }
 
     return(
-        loadingPost == true ?
+        loadingPost ?
         <div>
+            <br/>
             <p>Enviando e validando dados...</p>
             <Spinner animation="grow"></Spinner>
         </div>

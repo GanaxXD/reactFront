@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useState } from 'react';
-import { Card, InputGroup, FormControl, Container, Form, Row, Col, Alert } from 'react-bootstrap';
+import { Card, FormControl, Container, Form, Col, Alert } from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
 
@@ -21,7 +21,7 @@ async function cadastrar(ordem){
             responseStatus = response.status;
             responseMessage = response.statusText;
             orderResponseData = response.data;
-            return <Alert>Oi</Alert>
+            <Alert>Oi</Alert>
         })
         .catch((error)=>{
             responseStatus = error.status;
