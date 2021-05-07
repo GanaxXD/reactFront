@@ -5,40 +5,38 @@ import NavBarApp from '../components/NavBarApp';
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Spinner} from 'react-bootstrap';
 import './css/style.css';
 
+let mensagem;
 let statusRequest;
-    let mensagem;
-    let variantApp;
-    let titleApp;
+let variantApp;
+let titleApp;
 
 const FormClient = () =>{
 
-    
     // let loadingPost = false;
     const [loadingPost, setLoading] = useState(false);
      
     async function cadastrar(client){
         setLoading(true);
-        axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
-        .then(data => {
-            statusRequest = data.response.data['status']
-            console.log(statusRequest)
+        return axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
+        .then(response => {
+            console.log("entrei no then", response);
             variantApp = "success"
             mensagem = "O cliente foi cadastrado na base de dados."
             titleApp = "Cadastrado com sucesso!"
             setLoading(false);
+            
         }).catch( function (error) {
-            statusRequest = error.response.data['status']
-            mensagem = `Erro ao cadastrar o cliente. O erro "${statusRequest}"
-            foi retornado. Detalhes: ${error.response.data['titulo']}`
-            console.log("titulo: ", error.response.data.titulo, "status: ", error.response.data.status)
-            variantApp="danger"
-            titleApp = `Ah, que pena. Ocorreu um erro!`
-            setLoading(false);
+            if(error.response){
+                console.log("entrei no erro", error);
+                statusRequest = error.response.status;
+                mensagem = `Erro ao cadastrar o cliente. O erro "${error.response.status}"
+                foi retornado. Detalhes: ${error.response.data['titulo']}`
+                console.log("titulo: ", error.response.data['titulo'], "status: ", error.response.status)
+                variantApp="danger"
+                titleApp = `Ah, que pena. Ocorreu um erro!`
+                setLoading(false);
+            }
         });
-    }
-
-    const initialState={
-        pageTitle:'Cadastro de Clientes'
     }
 
     const initialClient = {
@@ -57,12 +55,12 @@ const FormClient = () =>{
     useEffect(()=>{
         if(show){
             console.log("Antes do If: Show: ", show, "Loading: ", loadingPost);
-            console.log("mensagem ", mensagem, "Variant: ", variantApp);
             setTimeout(()=>{
                 setShow(false);
-                setLoading(false);
-            },1000000);
-            console.log("Depois di If: Show: ", show, "Loading: ", loadingPost);
+                console.log("Dentro do TimeOut: Show: ", show, "Loading: ", loadingPost);
+            },90000);
+            setLoading(false);
+            console.log("Depois do If: Show: ", show, "Loading: ", loadingPost);
         }
     }, [show]);
 
@@ -75,21 +73,18 @@ const FormClient = () =>{
 
     //validando o formulário:
     const handleSubmit = async function carregar(event){
-        // setShow(false);
         if(event.currentTarget.checkValidity() === true){
-            cadastrar(client);
-            console.log("AQUI");
-            console.log(client)
-            // cadastrar(client).then(response=>{
-            //     console.log("dentro do client");
-            //     setShow(true);
-            //     setLoading(false);
-            // });
-            setShow(true);
+            console.log("Dentro do handleSubmit");
+            console.log(cadastrar(client));
+            cadastrar(client).then(response=>{
+                console.log("dentro do client");
+                setShow(true);
+                setLoading(false);
+            });
+            console.log("mensagem ", mensagem, "Variant: ", variantApp);
             event.preventDefault();
         }
         setValidated(true);
-        event.preventDefault();
     };
 
     function MensagemAlerta(){
@@ -103,10 +98,11 @@ const FormClient = () =>{
                 </Alert>
             );
         }
+        return console.log("Não houve retorno na função 'MensagemAlerta'");
     }
 
     return(
-        loadingPost ?
+        loadingPost && !show?
         <div>
             <br/>
             <p>Enviando e validando dados...</p>
@@ -129,7 +125,7 @@ const FormClient = () =>{
                             <Card.Text className="anuncio">A veocidade de conexão com o servidor é definido 
                                 de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
                                 (plataforma on-line onde a API está disponível), podendo levar um 
-                                tempo considerável (>40')
+                                tempo considerável ( {'>'} 40')
                             </Card.Text>
                             <InputGroup className="mb-3, inputSpace">
                                 <Col xl="11">

@@ -8,26 +8,17 @@ let responseStatus = "";
 let responseMessage = "";
 let orderResponseData;
 
-// async function cadastrar(ordem){
-//     let data = await axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
-//     let result = data.data;
-//     return result;
-
-// }
-
 async function cadastrar(ordem){
     axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
         .then((response)=>{
             responseStatus = response.status;
             responseMessage = response.statusText;
             orderResponseData = response.data;
-            <Alert>Oi</Alert>
         })
         .catch((error)=>{
             responseStatus = error.status;
             responseMessage = error.statusText;
-            orderResponseData = null;
-            return <Alert>Não</Alert>
+            orderResponseData = error.data;
         })
 }
 
@@ -50,7 +41,7 @@ const FormOrdemServico = () => {
     }
 
     const handleSubmit = event =>{
-        if(event.currentTarget.checkValidity() == false){
+        if(event.currentTarget.checkValidity() === false){
             event.preventDefault();
             event.setPropagation();
         }

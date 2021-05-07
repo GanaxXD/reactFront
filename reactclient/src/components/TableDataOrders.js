@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState } from 'react';
-import {Table, Card, Spinner, Form} from 'react-bootstrap';
+import {Table, Card, Spinner} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import axios from 'axios';
 
@@ -40,7 +40,7 @@ const TableDataOrders = ()=>{
                 loading = false;
             })
         }
-    }, [orders, loading]);
+    }, [orders]);
 
     useEffect(()=>{
         if(!comments.length){
@@ -49,7 +49,7 @@ const TableDataOrders = ()=>{
                 loadingComments = false;
             })
         }
-    }, [comments, loadingComments]);
+    }, [comments]);
     
 
     return(
@@ -65,7 +65,7 @@ const TableDataOrders = ()=>{
                     </Card.Text>
                     {
 
-                        loading == true ? 
+                        loading === true ? 
                         
                         <div className="progresso">
                             <h4>Carregando...</h4>

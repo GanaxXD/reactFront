@@ -17,7 +17,7 @@ const FormCadastrarComentarios = ()=>{
         descricao: ' '   
     }
     const [comentario, setComent] = useState(initialState);
-    const [validate, setValidate] = useState(false);
+    const [validated, setValidate] = useState(false);
 
     const handdlerChange = event =>{
         setComent({
@@ -26,7 +26,7 @@ const FormCadastrarComentarios = ()=>{
     }
 
     const handleSubmit = event =>{
-        if(event.currentTarget.checkValidity() == false){
+        if(event.currentTarget.checkValidity() === false){
             event.preventDefault();
             event.setPropagation();
         }
@@ -34,7 +34,7 @@ const FormCadastrarComentarios = ()=>{
     }
 
     return(
-        <Form noValidate onSubmit={handleSubmit} noValidate={validate}>
+        <Form noValidate onSubmit={handleSubmit} noValidate={validated}>
             <Fragment>
                 <NavBarApp/>
                 <h1 className="hcabecalho">Cadastro de Comentátios para Ordens de Serviço</h1>

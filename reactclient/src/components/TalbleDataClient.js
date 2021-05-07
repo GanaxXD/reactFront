@@ -42,7 +42,7 @@ const TableDataClient = ()=>{
             });
         }
         
-    }, [clientes, loading]);
+    }, [clientes]);
 
     return(
         <Fragment>
@@ -56,7 +56,7 @@ const TableDataClient = ()=>{
                         o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
                     {
-                        loading == true?
+                        loading === true?
                             <div className="carregandoDados">
                                 <h4>Carregando...</h4>
                                 <Spinner animation="grow" size="sm"/>
