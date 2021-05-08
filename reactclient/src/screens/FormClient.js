@@ -107,7 +107,8 @@ const FormClient = () =>{
             <br/>
             <p>Enviando e validando dados...</p>
             <Spinner animation="grow"></Spinner>
-            <p className="anuncio">Isso pode demorar um pouco</p>
+            <br/>
+            <p className="anuncio">Isso pode demorar um pouco.</p>
         </div>
         :
         <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
