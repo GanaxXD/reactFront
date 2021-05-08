@@ -58,7 +58,7 @@ const FormClient = () =>{
             setTimeout(()=>{
                 setShow(false);
                 console.log("Dentro do TimeOut: Show: ", show, "Loading: ", loadingPost);
-            },90000);
+            },5000);
             setLoading(false);
             console.log("Depois do If: Show: ", show, "Loading: ", loadingPost);
         }
@@ -103,10 +103,11 @@ const FormClient = () =>{
 
     return(
         loadingPost && !show?
-        <div>
+        <div className="carregandoDadosServidor">
             <br/>
             <p>Enviando e validando dados...</p>
             <Spinner animation="grow"></Spinner>
+            <p className="anuncio">Isso pode demorar um pouco</p>
         </div>
         :
         <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}

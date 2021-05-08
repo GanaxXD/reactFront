@@ -67,6 +67,22 @@ html {
     height: auto;
 }
 
+.carregandoDadosServidor{
+    /* pegando 100% da tela */
+    width: 100vw;
+    height: 100vw;
+    /* definindo o layout felex, pra poder usar o flex-direction 
+    como row, para trabalhar como uma linha, colocando os itens na div 'linha' */
+    display: flex;
+    flex-direction: row;
+    /* centralizando os itens na posição conforme indicado no flex-direction, neste
+    caso uma row, neste caso, alinhando os itens na horizontal. se o flex-direction 
+    fosse um collum, ele alinharia na vertical; */
+    justify-content: center;
+    /* alinhando itens na vertical */
+    align-items: center;
+}
+
 div > a {
     background-color:#343a40 ;
 }
