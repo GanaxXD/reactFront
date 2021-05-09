@@ -75,7 +75,6 @@ const FormClient = () =>{
     const handleSubmit = async function carregar(event){
         if(event.currentTarget.checkValidity() === true){
             console.log("Dentro do handleSubmit");
-            console.log(cadastrar(client));
             cadastrar(client).then(response=>{
                 console.log("dentro do client");
                 setShow(true);

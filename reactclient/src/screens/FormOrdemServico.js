@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { Card, FormControl, Container, Form, Col, Alert, Spinner } from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
@@ -13,6 +13,7 @@ const FormOrdemServico = () => {
     let titleApp;
 
     async function cadastrar(ordem){
+        setLoading(true);
         axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
             .then((response)=>{
                 console.log("Resposta: ",response.data)
@@ -20,23 +21,26 @@ const FormOrdemServico = () => {
                 responseMessage = response.statusText;
                 orderResponseData = response.data;
                 variantApp = "success";
-                titleApp = "Ordem de Serviço Cadastrada com Sucesso!"
-
+                titleApp = "Ordem de Serviço Cadastrada com Sucesso!";
+                setLoading(false);
             })
             .catch((error)=>{
                 //Quando a request não retorna uma resposta dentro do range 2xx
                 if(error.response){
-                    console.log("Erro: ", error.response);
+                    console.log("Erro response: ", error.response);
                     responseStatus = error.response.status;
-                    responseMessage = error.response.statusText;
+                    responseMessage = error.response.data['titulo'];
                     orderResponseData = error.response.data;
                     variantApp = "danger";
-                    titleApp = `Ah, droga! Ocorreu um erro! (${responseStatus})`
+                    titleApp = `Ah, droga! Ocorreu um erro! (${responseStatus})`;
+                    setLoading(false);
                 //quando a request é feita mas não retorna resposta (instancia de XMLHttpRequest se no Browser; http.ClientRequest, se no Node.js)
                 } else if (error.request){
                     console.log("Error Request: ", error.request);
+                    setLoading(false);
                 } else {
                     console.log("Error geral: ", error);
+                    setLoading(false);
                 }
                 
             })
@@ -53,13 +57,20 @@ const FormOrdemServico = () => {
     const [show, setShow] = useState(false);
     const [loadingPost, setLoading] = useState(false);
 
+    useEffect(()=>{
+        setTimeout(()=>{
+            setShow(true);
+            setLoading(false);
+        }, 5000);
+    }, [show]);
+
     const handlerOrderChange = event =>{
         setOrdem({
             ...ordem, [event.currentTarget.name]: event.currentTarget.value
         })
     }
 
-    const handleSubmit = event =>{
+    const handleSubmit = async function enviar (event){
         if(event.currentTarget.checkValidity() === true){
             cadastrar(ordem).then(resp =>{
                 setShow(true);
@@ -75,7 +86,6 @@ const FormOrdemServico = () => {
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
                     <Alert.Heading>{titleApp}</Alert.Heading>
-                       
                     <hr/>
                     {responseMessage}
                 </Alert>
@@ -85,7 +95,7 @@ const FormOrdemServico = () => {
     }
 
     return (
-        show && !loadingPost ?
+        !show && loadingPost ?
         <div className="carregandoDadosServidor">
             <br/>
             <p>Enviando e validando dados...</p>
