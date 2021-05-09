@@ -58,10 +58,12 @@ const FormOrdemServico = () => {
     const [loadingPost, setLoading] = useState(false);
 
     useEffect(()=>{
-        setTimeout(()=>{
-            setShow(true);
-            setLoading(false);
-        }, 5000);
+        if(show){
+            setTimeout(()=>{
+                setShow(true);
+                setLoading(false);
+            }, 5000);
+        }
     }, [show]);
 
     const handlerOrderChange = event =>{
@@ -72,13 +74,23 @@ const FormOrdemServico = () => {
 
     const handleSubmit = async function enviar (event){
         if(event.currentTarget.checkValidity() === true){
-            cadastrar(ordem).then(resp =>{
-                setShow(true);
-                setLoading(false);
-            })
+            cadastrar(ordem)
+            .then(
+                (response)=>{
+                    setShow(true);
+                    setTimeout(()=>{
+                        setShow(false);
+                    }, 5000);
+                },(response)=>{
+                    setShow(true);
+                    setTimeout(()=>{
+                        setShow(false);
+                    }, 5000);
+                });
             event.preventDefault();
         }
         setValidate(true);
+        event.preventDefault();
     }
 
     function MensagemAlerta(){

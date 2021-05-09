@@ -84,6 +84,7 @@ const FormClient = () =>{
             event.preventDefault();
         }
         setValidated(true);
+        event.preventDefault();
     };
 
     function MensagemAlerta(){
