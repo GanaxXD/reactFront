@@ -22,7 +22,7 @@ const FormOrdemServico = () => {
                 orderResponseData = response.data;
                 variantApp = "success";
                 titleApp = "Ordem de Serviço Cadastrada com Sucesso!";
-                setLoading(false);
+                // setLoading(false);
             })
             .catch((error)=>{
                 //Quando a request não retorna uma resposta dentro do range 2xx
@@ -33,22 +33,24 @@ const FormOrdemServico = () => {
                     orderResponseData = error.response.data;
                     variantApp = "danger";
                     titleApp = `Ah, droga! Ocorreu um erro! (${responseStatus})`;
-                    setLoading(false);
+                    // setLoading(false);
                 //quando a request é feita mas não retorna resposta (instancia de XMLHttpRequest se no Browser; http.ClientRequest, se no Node.js)
                 } else if (error.request){
                     console.log("Error Request: ", error.request);
-                    setLoading(false);
+                    // setLoading(false);
                 } else {
                     console.log("Error geral: ", error);
-                    setLoading(false);
+                    // setLoading(false);
                 }
                 
             })
+            setLoading(false);
+            setShow(true);
     }
 
     const initialState = {
-        clienteId : '',
-        descricao : '',
+        clienteId : '1',
+        descricao : 'Avaiação adicional',
         preco: ''
     }
 
@@ -58,10 +60,12 @@ const FormOrdemServico = () => {
     const [loadingPost, setLoading] = useState(false);
 
     useEffect(()=>{
+        console.log("#### Dentro do useEffect do alerta: ####")
         if(show){
+            console("Show dentro do useEffect: ", show);
             setTimeout(()=>{
-                setShow(true);
-                setLoading(false);
+                setShow(false);
+                console("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 5000);
         }
     }, [show]);
@@ -72,21 +76,13 @@ const FormOrdemServico = () => {
         })
     }
 
-    const handleSubmit = async function enviar (event){
+    const handleSubmit = (event)=>{
+        console.log("#### Dentro do handleSubmit: ####");
         if(event.currentTarget.checkValidity() === true){
-            cadastrar(ordem)
-            .then(
-                (response)=>{
-                    setShow(true);
-                    setTimeout(()=>{
-                        setShow(false);
-                    }, 5000);
-                },(response)=>{
-                    setShow(true);
-                    setTimeout(()=>{
-                        setShow(false);
-                    }, 5000);
-                });
+            console.log("Show dentro do IF/antes do cadastro: ", show);
+            cadastrar(ordem);
+            // .then((response)=>{setShow(true);});
+            console.log("Show dentro do IF/depois do cadastro: ", show);
             event.preventDefault();
         }
         setValidate(true);
@@ -94,7 +90,9 @@ const FormOrdemServico = () => {
     }
 
     function MensagemAlerta(){
-        if(show && !loadingPost){
+        console.log("#### Dentro do MensagemAlerta: ####");
+        console.log("Show: ", show, " LoadingPost: ", loadingPost);
+        if(show && loadingPost==false){
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
                     <Alert.Heading>{titleApp}</Alert.Heading>
@@ -103,7 +101,9 @@ const FormOrdemServico = () => {
                 </Alert>
             );
         }
-        return console.log("Não houve retorno na função 'MensagemAlerta'");
+        if( show && loadingPost){
+            return console.log("Não houve retorno na função 'MensagemAlerta'");
+        }
     }
 
     return (
