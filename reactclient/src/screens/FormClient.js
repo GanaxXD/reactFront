@@ -33,7 +33,7 @@ const FormClient = () =>{
                 foi retornado. Detalhes: ${error.response.data['titulo']}`
                 console.log("titulo: ", error.response.data['titulo'], "status: ", error.response.status)
                 variantApp="danger"
-                titleApp = `Ah, que pena. Ocorreu um erro!`
+                titleApp = `Ah, que pena. Ocorreu um erro! (Status da resposta: ${error.response.status})`
                 setLoading(false);
             }
         });

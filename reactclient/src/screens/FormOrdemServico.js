@@ -4,22 +4,20 @@ import { Card, FormControl, Container, Form, Col, Alert, Spinner } from 'react-b
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
 
-const FormOrdemServico = () => {
+let responseStatus = "";
+let responseMessage = "";
+let orderResponseData;
+let variantApp;
+let titleApp;
 
-    let responseStatus = "";
-    let responseMessage = "";
-    let orderResponseData;
-    let variantApp;
-    let titleApp;
+const FormOrdemServico = () => {
 
     async function cadastrar(ordem){
         setLoading(true);
         axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
             .then((response)=>{
-                console.log("Resposta: ",response.data)
-                responseStatus = response.status;
-                responseMessage = response.statusText;
-                orderResponseData = response.data;
+                console.log("Resposta: ",response)
+                responseMessage = "A ordem de serviço foi cadastrada com sucesso!";
                 variantApp = "success";
                 titleApp = "Ordem de Serviço Cadastrada com Sucesso!";
                 // setLoading(false);
@@ -32,7 +30,7 @@ const FormOrdemServico = () => {
                     responseMessage = error.response.data['titulo'];
                     orderResponseData = error.response.data;
                     variantApp = "danger";
-                    titleApp = `Ah, droga! Ocorreu um erro! (${responseStatus})`;
+                    titleApp = `Ah, droga! Ocorreu um erro! (Status da resposta: ${responseStatus})`;
                     // setLoading(false);
                 //quando a request é feita mas não retorna resposta (instancia de XMLHttpRequest se no Browser; http.ClientRequest, se no Node.js)
                 } else if (error.request){
@@ -43,9 +41,12 @@ const FormOrdemServico = () => {
                     // setLoading(false);
                 }
                 
-            })
-            setLoading(false);
-            setShow(true);
+                //Sempre ocorrerá
+            }).then(()=>{
+                setLoading(false);
+                setShow(true);
+            });
+            
     }
 
     const initialState = {
@@ -62,10 +63,10 @@ const FormOrdemServico = () => {
     useEffect(()=>{
         console.log("#### Dentro do useEffect do alerta: ####")
         if(show){
-            console("Show dentro do useEffect: ", show);
+            console.log("Show dentro do useEffect: ", show);
             setTimeout(()=>{
                 setShow(false);
-                console("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
+                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 5000);
         }
     }, [show]);
@@ -80,8 +81,8 @@ const FormOrdemServico = () => {
         console.log("#### Dentro do handleSubmit: ####");
         if(event.currentTarget.checkValidity() === true){
             console.log("Show dentro do IF/antes do cadastro: ", show);
-            cadastrar(ordem);
-            // .then((response)=>{setShow(true);});
+            cadastrar(ordem).then(console.log("AQUI:   ----->  ",variantApp, responseMessage, titleApp));
+            console.log("AQUI:   ----->  ",variantApp, responseMessage, titleApp);
             console.log("Show dentro do IF/depois do cadastro: ", show);
             event.preventDefault();
         }
