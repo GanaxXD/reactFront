@@ -16,7 +16,8 @@ const FormOrdemServico = () => {
         setLoading(true);
         axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
             .then((response)=>{
-                console.log("Resposta: ",response)
+                console.log("Resposta: ",response);
+                response.setHeader('Access-Control-Allow-Origin', '*');
                 responseMessage = "A ordem de serviço foi cadastrada com sucesso!";
                 variantApp = "success";
                 titleApp = "Ordem de Serviço Cadastrada com Sucesso!";
@@ -50,8 +51,8 @@ const FormOrdemServico = () => {
     }
 
     const initialState = {
-        clienteId : '1',
-        descricao : 'Avaiação adicional',
+        clienteId : '',
+        descricao : '',
         preco: ''
     }
 

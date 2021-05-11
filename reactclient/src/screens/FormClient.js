@@ -20,6 +20,7 @@ const FormClient = () =>{
         return axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
         .then(response => {
             console.log("entrei no then", response);
+            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
             variantApp = "success"
             mensagem = "O cliente foi cadastrado na base de dados."
             titleApp = "Cadastrado com sucesso!"
@@ -40,9 +41,6 @@ const FormClient = () =>{
     }
 
     const initialClient = {
-        // nome : 'pedro',
-        // email: 'pedro@gmail.com',
-        // fone : '98 985475585'
         nome : '',
         email: '',
         fone : ''
