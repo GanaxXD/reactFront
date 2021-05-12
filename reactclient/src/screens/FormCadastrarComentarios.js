@@ -13,11 +13,10 @@ const FormCadastrarComentarios = ()=>{
 
     async function cadastrar (comentario){
         setLoading(true);
-        axios.post(`https://api-client-serviceorder.herokuapp.com/ordemservico/${comentario.id}/comentario`, 
+        return axios.post(`https://api-client-serviceorder.herokuapp.com/ordemservico/${comentario.id}/comentario`, 
                     comentario, {
                         headers : {
-                            'Access-Control-Allow-Origin' : '*',
-                            "Access-Control-Allow-Origin":"*" 
+                            'Access-Control-Allow-Origin' : '*', 
                         }
                     })
         .then((response)=>{
@@ -37,23 +36,22 @@ const FormCadastrarComentarios = ()=>{
                 console.log("Erro... Foi triste.");
                 mensagem = "Ops... Achamos um erro. Por Favor, verifique se o ID da ordem informada de fato existe.";
                 titleApp = "Ah, droga!";
-                variantApp = "danger";
+                variantApp = "warning";
             } else {
                 console.log("Erro... Foi triste number 2.");
                 mensagem = "Ops... Achamos um erro. Por Favor, verifique se o ID da ordem informada de fato existe.";
                 titleApp = "Ah, droga!";
-                variantApp = "danger";
+                variantApp = "warning";
             }
-        })
-        .then(()=>{
+        }).then(()=>{
             setShow(true);
             setLoading(false);
-        });
+        })
     }
 
     const initialState = {
-        id: '1',
-        descricao: 'A adição de novos hardwares foram solicitados pelo cliente via mensagem de texto, sem nenhuma avaliação prévia da peça pelo profissional técnico da loja.'   
+        id: '',
+        descricao: ''//'A adição de novos hardwares foram solicitados pelo cliente via mensagem de texto, sem nenhuma avaliação prévia da peça pelo profissional técnico da loja.'   
     }
     const [comentario, setComent] = useState(initialState);
     const [validated, setValidate] = useState(false);
@@ -80,29 +78,21 @@ const FormCadastrarComentarios = ()=>{
         if(showError){
             setTimeout(()=>{
                 setShowError(false);
-                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
-            }, 5000);
+            }, 9000);
         }
     }, [showError])
 
     function MensagemAlerta(){
-        console.log("#### Dentro do MensagemAlerta: ####");
-        console.log("Show: ", show, " LoadingPost: ", loadingPost);
         if(show && loadingPost==false){
             return (
-                <ErrorBoundary onError={ErrorFallback} fallback={ErrorFallback}>
-                    <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
-                        <Alert.Heading>{titleApp}</Alert.Heading>
-                        <hr/>
-                        {mensagem}
-                    </Alert>
-                </ErrorBoundary>
+                <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
+                    <Alert.Heading>{titleApp}</Alert.Heading>
+                    <hr/>
+                    {mensagem}
+                </Alert>
             );
         }
-        if( show && loadingPost){
-            return console.log("Não houve retorno na função 'MensagemAlerta'");
-        }
-        return console.log("Sem resposta.");
+        return <p></p>;//precisa retornar um JSX
     }
 
     const handleSubmit = event =>{
@@ -114,8 +104,10 @@ const FormCadastrarComentarios = ()=>{
         event.preventDefault();
     }
 
-    function ErrorFallback(){
-        let mensagemErroAlert = "Tivemos um problema, provavelmente causado pelo id da ordem de serviço informada nessa ação. Por favor, certifique-se que a ordem de serviço existe no banco.";
+    function ErrorFallback({error}){
+        let mensagemErroAlert = `Tivemos um problema, provavelmente causado pelo id da ordem de 
+            serviço informada nessa ação. Por favor, certifique-se que a ordem de serviço existe 
+            no banco. Erro: ${error.message}`;
         let titleErroAlert = "Opa, achamos um erro!";
         let variantError = "warning";
         return (
@@ -142,7 +134,12 @@ const FormCadastrarComentarios = ()=>{
                     <NavBarApp/>
                     <h1 className="hcabecalho">Cadastro de Comentátios para Ordens de Serviço</h1>
                         <Container fluid="xl" >
-                            {show && <MensagemAlerta/>}
+                            <ErrorBoundary onReset={()=>setShow(false)} 
+                                            FallbackComponent={ErrorFallback} 
+                                            onError={()=>setShowError(true)}>
+                                {show && <MensagemAlerta/>}
+                            </ErrorBoundary>
+                            
                             <Card className="cardAppCustomized">
                                 <Card.Body>
                                     <Card.Text className="anuncio">A veocidade de conexão com o servidor é definido 

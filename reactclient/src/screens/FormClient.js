@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
+import {ErrorBoundary} from 'react-error-boundary'
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Spinner} from 'react-bootstrap';
 import './css/style.css';
 
@@ -49,6 +50,7 @@ const FormClient = () =>{
     const [client, setClient] = useState(initialClient);
     const [validated, setValidated] = useState(false);
     const [show, setShow] = useState(false);
+    const [showError, setShowError] = useState(false);
 
     useEffect(()=>{
         if(show){
@@ -61,6 +63,15 @@ const FormClient = () =>{
             console.log("Depois do If: Show: ", show, "Loading: ", loadingPost);
         }
     }, [show]);
+
+    useEffect(()=>{
+        if(showError){
+            setTimeout(()=>{
+                setShowError(false);
+                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
+            }, 9000);
+        }
+    }, [showError])
 
     //Criando o novo cliente, adicionando os campos no objeto/array
     const changeFields = event =>{
@@ -96,7 +107,21 @@ const FormClient = () =>{
                 </Alert>
             );
         }
-        return console.log("Não houve retorno na função 'MensagemAlerta'");
+        return <p></p>; //precisa retornar um JSX
+    }
+    function ErrorFallback({error}){
+        let mensagemErroAlert = `Tivemos um problema, provavelmente causado pelo id da ordem de 
+            serviço informada nessa ação. Por favor, certifique-se que a ordem de serviço existe 
+            no banco. Erro: ${error.message}`;
+        let titleErroAlert = "Opa, achamos um erro!";
+        let variantError = "warning";
+        return (
+            <Alert variant={variantError} show={showError} onClick={()=>setShowError(false)} dismissible>
+                <Alert.Heading>{titleErroAlert}</Alert.Heading>
+                <hr/>
+                {mensagemErroAlert}
+            </Alert>
+        );
     }
 
     return(
@@ -115,7 +140,11 @@ const FormClient = () =>{
             <h1 className="hcabecalho">Cadastro de Clientes</h1>
             
             {/* Se o show for true, o código seguinte é ativado */}
-            { show && <MensagemAlerta/> } 
+            <ErrorBoundary onReset={()=>setShow(false)} 
+                            FallbackComponent={ErrorFallback} 
+                            onError={()=>setShowError(true)}>
+                {show && <MensagemAlerta/>}
+            </ErrorBoundary> 
             
             {/* Formulário */}
             <Container fluid="xl" >

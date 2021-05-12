@@ -4,6 +4,8 @@ import { Card, FormControl, Container, Form, Col, Alert, Spinner } from 'react-b
 import ButtonHome from '../components/ButtonHome';
 import NavBarApp from '../components/NavBarApp';
 
+import {ErrorBoundary} from 'react-error-boundary';
+
 let responseStatus = "";
 let responseMessage = "";
 let orderResponseData;
@@ -47,7 +49,6 @@ const FormOrdemServico = () => {
                 setLoading(false);
                 setShow(true);
             });
-            
     }
 
     const initialState = {
@@ -60,6 +61,7 @@ const FormOrdemServico = () => {
     const [validate, setValidate]=useState(false);
     const [show, setShow] = useState(false);
     const [loadingPost, setLoading] = useState(false);
+    const [showError, setShowError] = useState(false);
 
     useEffect(()=>{
         console.log("#### Dentro do useEffect do alerta: ####")
@@ -91,6 +93,30 @@ const FormOrdemServico = () => {
         event.preventDefault();
     }
 
+    useEffect(()=>{
+        if(showError){
+            setTimeout(()=>{
+                setShowError(false);
+                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
+            }, 9000);
+        }
+    }, [showError]);
+
+    function ErrorFallback({error}){
+        let mensagemErroAlert = `Tivemos um problema, provavelmente causado pelo id da ordem de 
+            serviço informada nessa ação. Por favor, certifique-se que a ordem de serviço existe 
+            no banco. Erro: ${error.message}`;
+        let titleErroAlert = "Opa, achamos um erro!";
+        let variantError = "warning";
+        return (
+            <Alert variant={variantError} show={showError} onClick={()=>setShowError(false)} dismissible>
+                <Alert.Heading>{titleErroAlert}</Alert.Heading>
+                <hr/>
+                {mensagemErroAlert}
+            </Alert>
+        );
+    }
+
     function MensagemAlerta(){
         console.log("#### Dentro do MensagemAlerta: ####");
         console.log("Show: ", show, " LoadingPost: ", loadingPost);
@@ -103,9 +129,7 @@ const FormOrdemServico = () => {
                 </Alert>
             );
         }
-        if( show && loadingPost){
-            return console.log("Não houve retorno na função 'MensagemAlerta'");
-        }
+        return <p></p>; //precisa retornar um JSX
     }
 
     return (
@@ -124,7 +148,11 @@ const FormOrdemServico = () => {
             <NavBarApp />
             <h1 className="hcabecalho">Cadastro de Ordem de Serviço</h1>
             {/* Se o show for true, o código seguinte é ativado */}
-            { show && <MensagemAlerta/> } 
+            <ErrorBoundary onReset={()=>setShow(false)} 
+                            FallbackComponent={ErrorFallback} 
+                            onError={()=>setShowError(true)}>
+                {show && <MensagemAlerta/>}
+            </ErrorBoundary>
             <Container fluid="xl">
                 <Card className="cardAppCustomized">
                     <Card.Body>
