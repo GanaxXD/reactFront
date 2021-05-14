@@ -1,36 +1,91 @@
 import React, {Fragment, useEffect, useState } from 'react';
-import {Table, Card, Spinner} from 'react-bootstrap';
+import {Table, Card, Spinner, Alert} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import axios from 'axios';
+import {ErrorBoundary} from 'react-error-boundary'
 
 let maxOrders = 0;
 let maxComments = 0;
 let loading = true;
 let loadingComments = true;
 let baseLinkOrders = 'https://api-client-serviceorder.herokuapp.com/ordemservico';
-
-async function getAllOrders(){
-    let data = await axios(baseLinkOrders);
-    let result = data.data;
-    maxOrders = result.length;
-    loading = false;
-    return result;
-}
-
-async function getAllComments(id_chamado){
-    let data = await axios(`${baseLinkOrders}/${id_chamado}/comentario`);
-    let result = data.data;
-    maxComments = result.length;
-    loadingComments = false;
-    console.log(result);
-    return result;
-}
+let mensagem;
+let variantApp;
+let titleApp;
 
 const TableDataOrders = ()=>{
     
+    async function getAllOrders(){
+        let data = await axios(baseLinkOrders);
+        let result = data.data;
+        maxOrders = result.length;
+        loading = false;
+        return result;
+    }
+    
+    async function getAllComments(id_chamado){
+        let data = await axios(`${baseLinkOrders}/${id_chamado}/comentario`);
+        let result = data.data;
+        maxComments = result.length;
+        loadingComments = false;
+        console.log(result);
+        return result;
+    }
+
+    
+    async function excluir (id){
+        loading = true;
+        axios.delete(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, {
+            headers : {
+                'Access-Control-Allow-Origin' : '*', 
+            }
+        })
+        .then(response=>{
+            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
+            variantApp = "success"
+            mensagem = "O cliente foi excluido na base de dados."
+            titleApp = "Exclusão realizada com sucesso!"
+        }) 
+        .catch((error)=>{
+            if(error.response){
+                mensagem = error.response.data['titulo'];
+                titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
+                variantApp = "danger";
+            } else if (error.request) {
+                mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                titleApp = "Ah, droga!";
+                variantApp = "warning";
+            } else {
+                mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                titleApp = "Ah, droga!";
+                variantApp = "warning";
+            }
+        }).then(()=>{
+            setShow(true);
+            loading = false;
+        })
+    }
+
+    function mensagemExcluir(id){
+        return(<Alert variant="danger" show={showExcludeMessage} onClick={()=>setShowExcludeMessage(false)} dismissible>
+                    <Alert.Heading>Deseja Realmente Excluir Este Cadastro?</Alert.Heading>
+                    <hr/>
+                    Tem certeza que deseja excluir este dado? Ao excluir, o usuário
+                    será apagado da base de dados da aplicação.
+                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
+                    <hr/>
+                    <ButtonHome variant="outline-dark" onClick={()=>excluir(id)}>Excluir</ButtonHome>
+                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)}>Cancelar</ButtonHome>
+                </Alert>
+        );
+    }
+
     //state
     const [orders, setOrder]=useState([]);
     const [comments, setComment]=useState([]);
+    const [showExcludeMessage, setShowExcludeMessage] = useState(false);
+    const [show, setShow] = useState(false);
+    const [showError, setShowError] = useState(false);
 
     //criando lifecycle
     useEffect(()=>{
@@ -50,6 +105,25 @@ const TableDataOrders = ()=>{
             })
         }
     }, [comments]);
+
+    //Para a mensagem de erro (Erro Boundary)
+    useEffect(()=>{
+        if(showError){
+            setTimeout(()=>{
+                setShowError(false);
+            }, 9000);
+        }
+    }, [showError]);
+
+
+    //Para a mensagem de edição
+    useEffect(()=>{
+        if(show){
+            setTimeout(()=>{
+                setShow(false);
+            }, 9000)
+        }
+    }, [show]);
     
 
     return(
@@ -106,8 +180,8 @@ const TableDataOrders = ()=>{
                                                 // : maxComments
                                                 maxComments
                                             })</a></td>
-                                        <td><a href={`/editarOrdem/${data.id}`}>Editar</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
-                                        <td><a href={`/excluirOrdem/${data.id}`}>Excluir</a></td>  {/* as={Link} to ="rota-do-servico" para deixar a aplicação singlepage */}
+                                        <td key={Math.random()*100}><ButtonHome link={`/editarcliente/${data.id}`} variant="outline-success" title="Editar"/></td>
+                                            <td key={Math.random()*100}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
                                     </tr>
                                 )
                             }

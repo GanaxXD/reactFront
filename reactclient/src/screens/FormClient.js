@@ -83,13 +83,10 @@ const FormClient = () =>{
     //validando o formulário:
     const handleSubmit = async function carregar(event){
         if(event.currentTarget.checkValidity() === true){
-            console.log("Dentro do handleSubmit");
             cadastrar(client).then(response=>{
-                console.log("dentro do client");
                 setShow(true);
                 setLoading(false);
             });
-            console.log("mensagem ", mensagem, "Variant: ", variantApp);
             event.preventDefault();
         }
         setValidated(true);
@@ -151,7 +148,7 @@ const FormClient = () =>{
                 <Card className="cardAppCustomized">
                     <Card.Body>
                         <div>
-                            <Card.Text className="anuncio">A veocidade de conexão com o servidor é definido 
+                            <Card.Text className="anuncio">A velocidade de conexão com o servidor é definido 
                                 de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
                                 (plataforma on-line onde a API está disponível), podendo levar um 
                                 tempo considerável ( {'>'} 40')

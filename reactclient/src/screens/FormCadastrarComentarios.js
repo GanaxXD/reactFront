@@ -20,25 +20,20 @@ const FormCadastrarComentarios = ()=>{
                         }
                     })
         .then((response)=>{
-            response.setHeader('Access-Control-Allow-Origin', '*');
             mensagem = "O cadastro do comentário na ordem de serviço foi um sucesso!";
             variantApp = "success";
             titleApp = "Comentário cadastrado com sucesso!"
         })
         .catch((error)=>{
             if(error.response){
-                console.log(error, error.response);
                 mensagem = error.response.data['titulo'];
                 titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
                 variantApp = "danger";
             } else if (error.request) {
-                console.log("Error: ", error, "Error Request",error.request);
-                console.log("Erro... Foi triste.");
                 mensagem = "Ops... Achamos um erro. Por Favor, verifique se o ID da ordem informada de fato existe.";
                 titleApp = "Ah, droga!";
                 variantApp = "warning";
             } else {
-                console.log("Erro... Foi triste number 2.");
                 mensagem = "Ops... Achamos um erro. Por Favor, verifique se o ID da ordem informada de fato existe.";
                 titleApp = "Ah, droga!";
                 variantApp = "warning";
