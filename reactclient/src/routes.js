@@ -20,11 +20,11 @@ const AppRoutes = ()=>(
             <Route exact path="/comentarios" component={FormCadastrarComentarios}/>
             <Route exact path="/listaclientes" component={FormListarClientes}/>
             <Route exact path="/listaordens" component={FormListarOrdens}/>
-            <Route exact path={`/editarcliente/:data`} component={FormClientEdit}/>
+            <Route exact path="/editarcliente/:data" component={FormClientEdit}/>
             <Route exact path="/excluircliente/${data.id}" component={AlertApp}/>
             <Route exact path="/editarOrdem/${data.id}" component={FormListarOrdens}/>
             <Route exact path="/excluirOrdem/${data.id}" component={FormListarOrdens}/>
-
+            {/* :id:nome:fone:email */}
             <Route component={FormPageNotFound}/>
         </Switch>
     </BrowserRouter>

@@ -12,10 +12,18 @@ let variantApp;
 let titleApp;
 
 
-const FormClientEdit = (id, props) =>{
+const FormClientEdit = (props) =>{
+    
+    const id = 1;
 
-    let {cliente} = useParams();
-    console.log(cliente, props.params);
+    console.log(props.match.params);
+    
+
+    // const {id} = useParams();
+    // const {nome} = useParams();
+    // const {fone} = useParams();
+    // const {email} = useParams();
+    // console.log(id, nome, fone, email);
     // let loadingPost = false;
     const [loadingPost, setLoading] = useState(false);
      
@@ -41,9 +49,9 @@ const FormClientEdit = (id, props) =>{
     }
 
     const initialClient = {
-        nome : props.nome,
-        email: props.email,
-        fone : props.fone
+        nome : '',//nome,
+        email: '',//email,
+        fone : ''//fone
     }
 
     const [client, setClient] = useState(initialClient);

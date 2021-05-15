@@ -3,7 +3,9 @@ import React, { Fragment, useEffect, useState } from 'react';
 import {Table, Card, Spinner, Alert} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import AlertApp from '../components/AlertApp';
-import {ErrorBoundary} from 'react-error-boundary'
+import {ErrorBoundary} from 'react-error-boundary';
+import {BrowserRouter, Switch, Route, Router, useParams} from 'react-router-dom';
+import FormClientEdit from '../screens/FormClientEdit';
 
 let maxClients = 0;
 let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
@@ -175,7 +177,9 @@ const TableDataClient = ()=>{
                                             <td key={Math.random()*100}>{data.fone}</td>
                                             <td key={Math.random()*100}><ButtonHome link={`/editarcliente/${data}`} variant="outline-success" title="Editar"/></td>
                                             <td key={Math.random()*100}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
+
                                             {/* <td key={Math.random()*100}><a onClick={()=>mensagemExcluir(data.id)} href="#">Excluir</a></td> */}
+                                            {/* <td><Router exact path="/editarcliente/${data.id}" render={(props)=> <FormClientEdit/>} name={data.nome}></Router></td> */}
                                         </tr>
                                     )
                                 }
