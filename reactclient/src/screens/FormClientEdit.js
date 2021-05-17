@@ -5,32 +5,46 @@ import NavBarApp from '../components/NavBarApp';
 import {ErrorBoundary} from 'react-error-boundary'
 import {Card, InputGroup, FormControl, Col, Alert, Container, Form, Spinner} from 'react-bootstrap';
 import './css/style.css';
-import { useParams } from 'react-router-dom';
+import { useParams} from 'react-router-dom';
 
 let mensagem;
 let variantApp;
 let titleApp;
 
+const FormClientEdit = () =>{
 
-const FormClientEdit = (props) =>{
+    async function buscarCliente(id){
+        setLoadingClient(true);
+        axios.get(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`)
+            .then((response) => {
+                response.setHeader('Access-Control-Allow-Origin', '*');
+                console.log("RESPONSE: ", response);
+                console.log(response.data['email']);
+                client.nome = response.data.nome;
+                client.email = response.data.email;
+                client.fone = response.data.fone;
+                console.log("CLIET NOME: ",client);
+            }).catch((error) =>{
+                if(error.response){
+                    mensagem = error.response.data['titulo'];
+                    titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
+                    variantApp = "danger";
+                } else if (error.request){
+                    console.log("AQUI 2");
+                    mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                    titleApp = "Ah, droga!";
+                    variantApp = "warning";
+                } else {
+                    console.log("AQUI 3");
+                    mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                    titleApp = "Ah, droga!";
+                    variantApp = "warning";
+                }
+            }).then(()=>{
+                setLoadingClient(false);
+        });
+    }
     
-    let dadosDoCliente = [];
-    let dadosRecebidosDaRota = String.toString(props.match.params);
-    
-
-    const id =1;
-    console.log(dadosRecebidosDaRota);
-    // dadosDoCliente = dadosRecebidosDaRota.split("&&");
-    console.log(dadosDoCliente);
-
-    // const {id} = useParams();
-    // const {nome} = useParams();
-    // const {fone} = useParams();
-    // const {email} = useParams();
-    // console.log(id, nome, fone, email);
-    // let loadingPost = false;
-    const [loadingPost, setLoading] = useState(false);
-     
     async function editar(client){
         setLoading(true);
         return axios.put(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, client)
@@ -53,15 +67,18 @@ const FormClientEdit = (props) =>{
     }
 
     const initialClient = {
-        nome : '',//nome,
-        email: '',//email,
-        fone : ''//fone
+        nome : '',
+        email: '',
+        fone : '',
     }
 
+    const {id} = useParams();
     const [client, setClient] = useState(initialClient);
     const [validated, setValidated] = useState(false);
     const [show, setShow] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [loadingClient, setLoadingClient] = useState(false);
+    const [loadingPost, setLoading] = useState(false);
 
     useEffect(()=>{
         if(show){
@@ -71,6 +88,14 @@ const FormClientEdit = (props) =>{
             setLoading(false);
         }
     }, [show]);
+
+    useEffect(()=>{
+        buscarCliente(id);
+        console.log("CLIENT HOOK: ", client);
+        if(!client.count){
+            setLoadingClient(false);
+        }
+    }, [loadingClient]);
 
     useEffect(()=>{
         if(showError){
@@ -133,116 +158,124 @@ const FormClientEdit = (props) =>{
     }
 
     return(
-        loadingPost && !show?
-        <div className="carregandoDadosServidor">
-            <br/>
-            <p>Enviando e validando dados...</p>
-            <Spinner animation="grow"></Spinner>
-            <br/>
-            <p className="anuncio">Isso pode demorar um pouco.</p>
-        </div>
+        (loadingClient) ? 
+            <div className="carregandoDadosServidor">
+                <br/>
+                <p>Aguarde...</p>
+                <Spinner animation="grow"></Spinner>
+                <br/>
+                <p className="anuncio">Isso pode demorar um pouco.</p>
+            </div>
         :
-        <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
-            {/* Cabeçalho */}
-            <NavBarApp/>
-            <h1 className="hcabecalho">Atualização do cadastro de Clientes</h1>
-            
-            {/* Se o show for true, o código seguinte é ativado */}
-            <ErrorBoundary onReset={()=>setShow(false)} 
-                            FallbackComponent={ErrorFallback} 
-                            onError={()=>setShowError(true)}>
-                {show && <MensagemAlerta/>}
-            </ErrorBoundary> 
-            
-            {/* Formulário */}
-            <Container fluid="xl" >
+        (loadingPost && !show) ?
+            <div className="carregandoDadosServidor">
+                <br/>
+                <p>Enviando e validando dados...</p>
+                <Spinner animation="grow"></Spinner>
+                <br/>
+                <p className="anuncio">Isso pode demorar um pouco.</p>
+            </div>
+        :
+            <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
+                {/* Cabeçalho */}
+                <NavBarApp/>
+                <h1 className="hcabecalho">Atualização do cadastro de Clientes</h1>
+                
+                {/* Se o show for true, o código seguinte é ativado */}
                 <ErrorBoundary onReset={()=>setShow(false)} 
-                            FallbackComponent={ErrorFallback} 
-                            onError={()=>setShowError(true)}>
-                    <Card className="cardAppCustomized">
-                        <Card.Body>
-                            <div>
-                                <Card.Text className="anuncio">A velocidade de conexão com o servidor é definido 
-                                    de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
-                                    (plataforma on-line onde a API está disponível), podendo levar um 
-                                    tempo considerável ( {'>'} 40')
-                                </Card.Text>
-                                <InputGroup className="mb-3, inputSpace">
-                                    <Col xl="11">
-                                        <Form.Label>Nome do Cliente (*)</Form.Label>
-                                        <FormControl 
-                                            placeholder="Nome"
-                                            arial-label="nome"
-                                            aerial-describedby="basic-addon1"
-                                            name="nome" 
-                                            onChange={changeFields}
-                                            value={client?.nome}
-                                            required             
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            Digite um nome.
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </InputGroup>
-
-                                <Form.Group>
-                                    <Form.Label>E-Mail do Cliente (*)</Form.Label>
-                                    <Col xl="11">
-                                        <InputGroup className="mb-3, inputSpace" hasValidation>
-                                            <InputGroup.Prepend>
-                                                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                                            </InputGroup.Prepend>
-                                            <FormControl
-                                                placeholder="E-mail"
-                                                arial-label="e-mail"
+                                FallbackComponent={ErrorFallback} 
+                                onError={()=>setShowError(true)}>
+                    {show && <MensagemAlerta/>}
+                </ErrorBoundary> 
+                
+                {/* Formulário */}
+                <Container fluid="xl" >
+                    <ErrorBoundary onReset={()=>setShow(false)} 
+                                FallbackComponent={ErrorFallback} 
+                                onError={()=>setShowError(true)}>
+                        <Card className="cardAppCustomized">
+                            <Card.Body>
+                                <div>
+                                    <Card.Text className="anuncio">A velocidade de conexão com o servidor é definido 
+                                        de acordo com as normas do pacote do <i>Heroku</i> adiquirida 
+                                        (plataforma on-line onde a API está disponível), podendo levar um 
+                                        tempo considerável ( {'>'} 40')
+                                    </Card.Text>
+                                    <InputGroup className="mb-3, inputSpace">
+                                        <Col xl="11">
+                                            <Form.Label>Nome do Cliente (*)</Form.Label>
+                                            <FormControl 
+                                                placeholder="Nome"
+                                                arial-label="nome"
                                                 aerial-describedby="basic-addon1"
-                                                type="email"
-                                                name="email"
-                                                onChange={changeFields} 
-                                                value={client?.email}
-                                                required
-                                            />
-                                            <Form.Control.Feedback type="invalid">Digite um e-mail.</Form.Control.Feedback>
-                                        </InputGroup>
-                                    </Col>
-                                </Form.Group>
-
-                                <InputGroup className="mb-3, inputSpace" hasValidation>
-                                    <Col xl="11">
-                                        <Form.Label>Telefone (*)</Form.Label>
-                                        <FormControl 
-                                                placeholder="Telefone (xx) nnnnn-nnnn"
-                                                arial-label="telefone"
-                                                aerial-describedby="basic-addon1"
-                                                type="tel"
-                                                //pattern="([09]{2})[0-9]{5}-[0-9]{4}"
-                                                name="fone"
+                                                name="nome" 
                                                 onChange={changeFields}
-                                                value={client?.fone}
-                                                required
-                                        />
-                                        <Form.Control.Feedback type="invalid"> 
-                                            Por favor, digite um número de telefone.
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </InputGroup>
-                            </div>
-                            <p className="anuncio">Os campos com * são obrigatórios.</p>
-                            <ButtonHome 
-                                variant="primary" title="Editar" 
-                                type="submit"
-                            />
-                        </Card.Body>
-                    </Card>
-                </ErrorBoundary>
-            </Container>
+                                                value={client?.nome}
+                                                required             
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                Digite um nome.
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </InputGroup>
 
-            {/* Footer */}
-            <hr/>
-            <ButtonHome variant="outline-dark" link="/" 
-                title="Voltar Para a Página Inicial"/>
-        </Form>
+                                    <Form.Group>
+                                        <Form.Label>E-Mail do Cliente (*)</Form.Label>
+                                        <Col xl="11">
+                                            <InputGroup className="mb-3, inputSpace" hasValidation>
+                                                <InputGroup.Prepend>
+                                                    <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+                                                </InputGroup.Prepend>
+                                                <FormControl
+                                                    placeholder="E-mail"
+                                                    arial-label="e-mail"
+                                                    aerial-describedby="basic-addon1"
+                                                    type="email"
+                                                    name="email"
+                                                    onChange={changeFields} 
+                                                    value={client?.email}
+                                                    required
+                                                />
+                                                <Form.Control.Feedback type="invalid">Digite um e-mail.</Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
 
+                                    <InputGroup className="mb-3, inputSpace" hasValidation>
+                                        <Col xl="11">
+                                            <Form.Label>Telefone (*)</Form.Label>
+                                            <FormControl 
+                                                    placeholder="Telefone (xx) nnnnn-nnnn"
+                                                    arial-label="telefone"
+                                                    aerial-describedby="basic-addon1"
+                                                    type="tel"
+                                                    //pattern="([09]{2})[0-9]{5}-[0-9]{4}"
+                                                    name="fone"
+                                                    onChange={changeFields}
+                                                    value={client?.fone}
+                                                    required
+                                            />
+                                            <Form.Control.Feedback type="invalid"> 
+                                                Por favor, digite um número de telefone.
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </InputGroup>
+                                </div>
+                                <p className="anuncio">Os campos com * são obrigatórios.</p>
+                                <ButtonHome 
+                                    variant="primary" title="Editar" 
+                                    type="submit"
+                                />
+                            </Card.Body>
+                        </Card>
+                    </ErrorBoundary>
+                </Container>
+
+                {/* Footer */}
+                <hr/>
+                <ButtonHome variant="outline-dark" link="/" 
+                    title="Voltar Para a Página Inicial"/>
+            </Form>
     );
 }
 
