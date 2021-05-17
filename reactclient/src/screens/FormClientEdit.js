@@ -14,10 +14,14 @@ let titleApp;
 
 const FormClientEdit = (props) =>{
     
-    const id = 1;
-
-    console.log(props.match.params);
+    let dadosDoCliente = [];
+    let dadosRecebidosDaRota = String.toString(props.match.params);
     
+
+    const id =1;
+    console.log(dadosRecebidosDaRota);
+    // dadosDoCliente = dadosRecebidosDaRota.split("&&");
+    console.log(dadosDoCliente);
 
     // const {id} = useParams();
     // const {nome} = useParams();

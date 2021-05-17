@@ -175,7 +175,7 @@ const TableDataClient = ()=>{
                                             <td key={Math.random()*100}>{data.nome}</td>
                                             <td key={Math.random()*100}>{data.email}</td>
                                             <td key={Math.random()*100}>{data.fone}</td>
-                                            <td key={Math.random()*100}><ButtonHome link={`/editarcliente/${data}`} variant="outline-success" title="Editar"/></td>
+                                            <td key={Math.random()*100}><ButtonHome link={`/editarcliente/${data.id}&&${data.nome}&&${data.email}&&${data.fone}`} variant="outline-success" title="Editar"/></td>
                                             <td key={Math.random()*100}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
 
                                             {/* <td key={Math.random()*100}><a onClick={()=>mensagemExcluir(data.id)} href="#">Excluir</a></td> */}
