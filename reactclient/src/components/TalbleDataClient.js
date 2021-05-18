@@ -156,7 +156,7 @@ const TableDataClient = ()=>{
                                 </div> 
                             :
                         
-                            <Table responsive striped bordered hover variant="dark" size="sm">
+                            <Table responsive striped bordered hover variant="dark" size="sm" >
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -171,12 +171,12 @@ const TableDataClient = ()=>{
                                 {
                                     clientes.map((data, index)=>
                                         <tr>
-                                            <td key={Math.random()*100}>{data.id}</td>
-                                            <td key={Math.random()*100}>{data.nome}</td>
-                                            <td key={Math.random()*100}>{data.email}</td>
-                                            <td key={Math.random()*100}>{data.fone}</td>
-                                            <td key={Math.random()*100}><ButtonHome link={`/editarcliente/${data.id}`} variant="outline-success" title="Editar"/></td>
-                                            <td key={Math.random()*100}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
+                                            <td key={data.id+1}>{data.id}</td>
+                                            <td key={data.id+2}>{data.nome}</td>
+                                            <td key={data.id+3}>{data.email}</td>
+                                            <td key={data.id+4}>{data.fone}</td>
+                                            <td key={data.id+5}><ButtonHome link={`/editarcliente/${data.id}`} variant="outline-success" title="Editar"/></td>
+                                            <td key={data.id+6}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
                                         </tr>
                                     )
                                 }

@@ -13,13 +13,24 @@ let titleApp;
 
 const FormClientEdit = () =>{
 
+    const initState = {
+        nome: ' ',
+        email: ' ',
+        fone: ' '
+    }
+
+    const {id} = useParams();
+    const [client, setClient] = useState(initState);
+    const [validated, setValidated] = useState(false);
+    const [show, setShow] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     async function buscarCliente(id){
-        setLoadingClient(true);
+        setLoading(true);
         axios.get(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`)
             .then((response) => {
-                response.setHeader('Access-Control-Allow-Origin', '*');
-                console.log("RESPONSE: ", response);
-                console.log(response.data['email']);
+                console.log(response.data);
                 client.nome = response.data.nome;
                 client.email = response.data.email;
                 client.fone = response.data.fone;
@@ -41,19 +52,17 @@ const FormClientEdit = () =>{
                     variantApp = "warning";
                 }
             }).then(()=>{
-                setLoadingClient(false);
-        });
+                setLoading(false);
+            });
     }
     
     async function editar(client){
-        setLoading(true);
-        return axios.put(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, client)
+        axios.put(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, client)
         .then(response => {
             response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
             variantApp = "success"
             mensagem = "As alterações no cadastrado do usuário foram cadastradas na base de dados."
-            titleApp = "Atualização do cliente com sucesso!"
-            setLoading(false);
+            titleApp = "Atualização do cliente com sucesso!";
             
         }).catch( function (error) {
             if(error.response){
@@ -61,49 +70,37 @@ const FormClientEdit = () =>{
                 foi retornado. Detalhes: ${error.response.data['titulo']}`
                 variantApp="danger"
                 titleApp = `Ah, que pena. Ocorreu um erro! (Status da resposta: ${error.response.status})`
-                setLoading(false);
             }
         });
     }
 
-    const initialClient = {
-        nome : '',
-        email: '',
-        fone : '',
-    }
-
-    const {id} = useParams();
-    const [client, setClient] = useState(initialClient);
-    const [validated, setValidated] = useState(false);
-    const [show, setShow] = useState(false);
-    const [showError, setShowError] = useState(false);
-    const [loadingClient, setLoadingClient] = useState(false);
-    const [loadingPost, setLoading] = useState(false);
-
+    //criando lifecycle
     useEffect(()=>{
-        if(show){
-            setTimeout(()=>{
-                setShow(false);
-            },5000);
-            setLoading(false);
+        console.log(id);
+        if(client.nome === ' '){
+            buscarCliente(id);
         }
-    }, [show]);
+        
+    }, [client]);
 
-    useEffect(()=>{
-        buscarCliente(id);
-        console.log("CLIENT HOOK: ", client);
-        if(!client.count){
-            setLoadingClient(false);
-        }
-    }, [loadingClient]);
-
+    //Para a mensagem de erro (Erro Boundary)
     useEffect(()=>{
         if(showError){
             setTimeout(()=>{
                 setShowError(false);
             }, 9000);
         }
-    }, [showError])
+    }, [showError]);
+
+
+    //Para a mensagem de edição
+    useEffect(()=>{
+        if(show){
+            setTimeout(()=>{
+                setShow(false);
+            }, 9000)
+        }
+    }, [show]);
 
     //Criando o novo cliente, adicionando os campos no objeto/array
     const changeFields = event =>{
@@ -114,22 +111,22 @@ const FormClientEdit = () =>{
 
     //validando o formulário:
     const handleSubmit = async function carregar(event){
+        setLoading(true);
         if(event.currentTarget.checkValidity() === true){
             console.log("Dentro do handleSubmit");
             editar(client).then(response=>{
                 console.log("dentro do client");
                 setShow(true);
-                setLoading(false);
             });
             console.log("mensagem ", mensagem, "Variant: ", variantApp);
             event.preventDefault();
-        }
+        };
         setValidated(true);
         event.preventDefault();
     };
 
     function MensagemAlerta(){
-        if(show && !loadingPost){
+        if(show){
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
                     <Alert.Heading>{titleApp}</Alert.Heading>
@@ -138,14 +135,13 @@ const FormClientEdit = () =>{
                     {mensagem}
                 </Alert>
             );
-        }
+        };
         return <p></p>; //precisa retornar um JSX
-    }
+    };
     
     function ErrorFallback({error}){
-        let mensagemErroAlert = `Tivemos um problema, provavelmente causado pelo id da ordem de 
-            serviço informada nessa ação. Por favor, certifique-se que a ordem de serviço existe 
-            no banco. Erro: ${error.message}`;
+        let mensagemErroAlert = `Tivemos um problema nessa ação. 
+            Por favor, tente novamente. Erro: ${error.message}`;
         let titleErroAlert = "Opa, achamos um erro!";
         let variantError = "warning";
         return (
@@ -155,22 +151,16 @@ const FormClientEdit = () =>{
                 {mensagemErroAlert}
             </Alert>
         );
-    }
-
-    return(
-        (loadingClient) ? 
+    };
+    
+    return( <ErrorBoundary onReset={()=>setShow(false)} 
+                            FallbackComponent={ErrorFallback} 
+                            onError={()=>setShowError(true)}>
+        {
+        (!show && loading) ?
             <div className="carregandoDadosServidor">
                 <br/>
                 <p>Aguarde...</p>
-                <Spinner animation="grow"></Spinner>
-                <br/>
-                <p className="anuncio">Isso pode demorar um pouco.</p>
-            </div>
-        :
-        (loadingPost && !show) ?
-            <div className="carregandoDadosServidor">
-                <br/>
-                <p>Enviando e validando dados...</p>
                 <Spinner animation="grow"></Spinner>
                 <br/>
                 <p className="anuncio">Isso pode demorar um pouco.</p>
@@ -263,8 +253,7 @@ const FormClientEdit = () =>{
                                 </div>
                                 <p className="anuncio">Os campos com * são obrigatórios.</p>
                                 <ButtonHome 
-                                    variant="primary" title="Editar" 
-                                    type="submit"
+                                    variant="primary" title="Editar" type="submit"
                                 />
                             </Card.Body>
                         </Card>
@@ -276,6 +265,7 @@ const FormClientEdit = () =>{
                 <ButtonHome variant="outline-dark" link="/" 
                     title="Voltar Para a Página Inicial"/>
             </Form>
+        }</ErrorBoundary>
     );
 }
 
