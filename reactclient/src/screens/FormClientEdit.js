@@ -57,26 +57,33 @@ const FormClientEdit = () =>{
     }
     
     async function editar(client){
+        setLoading(true);
         axios.put(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, client)
-        .then(response => {
-            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
-            variantApp = "success"
-            mensagem = "As alterações no cadastrado do usuário foram cadastradas na base de dados."
+        .then((response) => {
+            // response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
+            variantApp = "success";
+            mensagem = "As alterações no cadastrado do usuário foram cadastradas na base de dados.";
             titleApp = "Atualização do cliente com sucesso!";
-            
-        }).catch( function (error) {
+            console.log(mensagem, titleApp);
+        }).catch( (error) => {
             if(error.response){
-                mensagem = `Erro ao atualizar os dados do cliente. O erro "${error.response.status}"
-                foi retornado. Detalhes: ${error.response.data['titulo']}`
-                variantApp="danger"
-                titleApp = `Ah, que pena. Ocorreu um erro! (Status da resposta: ${error.response.status})`
+                mensagem = `Erro ao atualizar os dados do cliente. O erro "${error.response.status}";
+                foi retornado. Detalhes: ${error.response.data['titulo']}`;
+                variantApp="danger";
+                titleApp = `Ah, que pena. Ocorreu um erro durante a edição do cadastro! (Status da resposta: ${error.response.status})`;
+            } else {
+                console.log("AQUI AAA: ", error);
+                mensagem = "Ops... Achamos um erro durante a edição do cadastro. Por Favor, tente mais tarde.";
+                titleApp = "Ah, droga!";
+                variantApp = "warning";
             }
+        }).then(()=>{
+            setLoading(false);
         });
     }
 
     //criando lifecycle
     useEffect(()=>{
-        console.log(id);
         if(client.nome === ' '){
             buscarCliente(id);
         }
@@ -111,10 +118,9 @@ const FormClientEdit = () =>{
 
     //validando o formulário:
     const handleSubmit = async function carregar(event){
-        setLoading(true);
         if(event.currentTarget.checkValidity() === true){
             console.log("Dentro do handleSubmit");
-            editar(client).then(response=>{
+            editar(client).then(()=>{
                 console.log("dentro do client");
                 setShow(true);
             });
@@ -157,7 +163,7 @@ const FormClientEdit = () =>{
                             FallbackComponent={ErrorFallback} 
                             onError={()=>setShowError(true)}>
         {
-        (!show && loading) ?
+            (!show && loading) ?
             <div className="carregandoDadosServidor">
                 <br/>
                 <p>Aguarde...</p>
@@ -165,7 +171,7 @@ const FormClientEdit = () =>{
                 <br/>
                 <p className="anuncio">Isso pode demorar um pouco.</p>
             </div>
-        :
+            :
             <Form onSubmit={handleSubmit} noValidate validated={validated}> {/* o noValidate é para evitar que o browser valide o formulário pela sua própria metodologia de validação */}
                 {/* Cabeçalho */}
                 <NavBarApp/>
