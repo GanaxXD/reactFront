@@ -1,11 +1,9 @@
 import axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
-import {Table, Card, Spinner, Alert} from 'react-bootstrap';
+import {Table, Card, Spinner, Alert, closeButton} from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
 import ButtonHome from '../components/ButtonHome';
-import AlertApp from '../components/AlertApp';
 import {ErrorBoundary} from 'react-error-boundary';
-import {BrowserRouter, Switch, Route, Router, useParams} from 'react-router-dom';
-import FormClientEdit from '../screens/FormClientEdit';
 
 let maxClients = 0;
 let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
@@ -34,7 +32,7 @@ const TableDataClient = ()=>{
             }
         })
         .then(response=>{
-            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
+            // response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
             variantApp = "success"
             mensagem = "O cliente foi excluido na base de dados."
             titleApp = "Exclusão realizada com sucesso!"
@@ -58,35 +56,40 @@ const TableDataClient = ()=>{
             loading = false;
         })
     }
-    
-    function mensagemExcluir(id){
-        return(<Alert variant="danger" show={showExcludeMessage} onClick={()=>setShowExcludeMessage(false)} dismissible>
-                    <Alert.Heading>Deseja Realmente Excluir Este Cadastro?</Alert.Heading>
-                    <hr/>
-                    Tem certeza que deseja excluir este dado? Ao excluir, o usuário
-                    será apagado da base de dados da aplicação.
-                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
-                    <hr/>
-                    <ButtonHome variant="outline-dark" onClick={()=>excluir(id)}>Excluir</ButtonHome>
-                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)}>Cancelar</ButtonHome>
-                </Alert>
-        );
-    }
-
-    function mensagemEditar(){
-        return(<AlertApp dismissible
-            title="Deseja Realmente salvar as alterações feitas no cadastro do cliente?"
-            variant="warning"
-            message="Você está prestes a alterar o registro do usuário da base de dados. Deseja realmente realizar essa operação?"
-            onClickButtonOk= "null"
-        />);
-    }
 
     //state
     const [clientes, setClient] = useState([]);
     const [showError, setShowError] = useState(false);
     const [show, setShow] = useState(false);
+
     const [showExcludeMessage, setShowExcludeMessage] = useState(false);
+    const handleClose = () => setShowExcludeMessage(false);
+
+    function MensagemExcluir(id){
+        setShowExcludeMessage(true);
+        setShowExcludeMessage(true);
+        console.log(id, showExcludeMessage);
+
+        return(
+            <Modal show={showExcludeMessage} onHide={handleClose} backdrop="static" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Excluir Cliente?</Modal.Title>
+                </Modal.Header>
+            
+                <Modal.Body>
+                    <p>Tem certeza que deseja excluir este dado? Ao excluir, o usuário
+                    será apagado da base de dados da aplicação.</p>
+                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
+                </Modal.Body>
+            
+                <Modal.Footer>
+                    <ButtonHome variant="outline-dark" onClick={()=>excluir(id)}>Excluir</ButtonHome>
+                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)}>Cancelar</ButtonHome>
+                </Modal.Footer>
+            </Modal>
+            
+        );
+    }
 
     //criando lifecycle
     useEffect(()=>{
@@ -155,7 +158,6 @@ const TableDataClient = ()=>{
                                     </p>
                                 </div> 
                             :
-                        
                             <Table responsive striped bordered hover variant="dark" size="sm" >
                             <thead>
                                 <tr>
@@ -176,7 +178,7 @@ const TableDataClient = ()=>{
                                             <td key={data.id+3}>{data.email}</td>
                                             <td key={data.id+4}>{data.fone}</td>
                                             <td key={data.id+5}><ButtonHome link={`/editarcliente/${data.id}`} variant="outline-success" title="Editar"/></td>
-                                            <td key={data.id+6}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
+                                            <td key={data.id+6}> <ButtonHome onClick={()=>MensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
                                         </tr>
                                     )
                                 }
