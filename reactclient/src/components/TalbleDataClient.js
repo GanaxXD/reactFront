@@ -11,6 +11,8 @@ let loading = true;
 let mensagem;
 let variantApp;
 let titleApp;
+let idCliente;
+let indexClienteExcuir;
 
 const TableDataClient = ()=>{
     
@@ -24,6 +26,13 @@ const TableDataClient = ()=>{
         return result;
     }
 
+    //state
+    const [clientes, setClient] = useState([]);
+    const [showError, setShowError] = useState(false);
+    const [show, setShow] = useState(false);
+
+    const [showExcludeMessage, setShowExcludeMessage] = useState(false);
+
     async function excluir (id){
         loading = true;
         axios.delete(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, {
@@ -36,6 +45,9 @@ const TableDataClient = ()=>{
             variantApp = "success"
             mensagem = "O cliente foi excluido na base de dados."
             titleApp = "Exclusão realizada com sucesso!"
+            setShowExcludeMessage(false);
+            clientes.splice(indexClienteExcuir, 1); //removendo o cliente do nosso array de clientes local (da poição do index, remover 1)
+            console.log(clientes);
         }) 
         .catch((error)=>{
             if(error.response){
@@ -57,38 +69,15 @@ const TableDataClient = ()=>{
         })
     }
 
-    //state
-    const [clientes, setClient] = useState([]);
-    const [showError, setShowError] = useState(false);
-    const [show, setShow] = useState(false);
-
-    const [showExcludeMessage, setShowExcludeMessage] = useState(false);
+    
     const handleClose = () => setShowExcludeMessage(false);
 
-    function MensagemExcluir(id){
+    function MensagemExcluir(id, index){
+        indexClienteExcuir = index;
         setShowExcludeMessage(true);
-        setShowExcludeMessage(true);
-        console.log(id, showExcludeMessage);
-
-        return(
-            <Modal show={showExcludeMessage} onHide={handleClose} backdrop="static" centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Excluir Cliente?</Modal.Title>
-                </Modal.Header>
-            
-                <Modal.Body>
-                    <p>Tem certeza que deseja excluir este dado? Ao excluir, o usuário
-                    será apagado da base de dados da aplicação.</p>
-                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
-                </Modal.Body>
-            
-                <Modal.Footer>
-                    <ButtonHome variant="outline-dark" onClick={()=>excluir(id)}>Excluir</ButtonHome>
-                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)}>Cancelar</ButtonHome>
-                </Modal.Footer>
-            </Modal>
-            
-        );
+        idCliente = id;
+        console.log("idClient: ", idCliente, "Index: ", index);
+        
     }
 
     //criando lifecycle
@@ -97,6 +86,7 @@ const TableDataClient = ()=>{
             getAllClients().then(data=>{
                 setClient(data);
                 loading = false;
+                console.log(clientes);
             });
         }
         
@@ -137,6 +127,22 @@ const TableDataClient = ()=>{
 
     return(
         <Fragment>
+            <Modal show={showExcludeMessage} onHide={handleClose} backdrop="static" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Excluir Cliente?</Modal.Title>
+                </Modal.Header>
+            
+                <Modal.Body>
+                    <p>Tem certeza que deseja excluir este dado? Ao excluir, o usuário
+                    será apagado da base de dados da aplicação.</p>
+                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
+                </Modal.Body>
+            
+                <Modal.Footer>
+                    <ButtonHome variant="outline-dark" onClick={()=>excluir(idCliente)} title="Excluir"></ButtonHome>
+                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)} title="Cancelar"></ButtonHome>
+                </Modal.Footer>
+            </Modal>
             <br/>
             <Card className="cardAppCustomized">
                 <Card.Title className="cardTitle">Clientes Cadastrados</Card.Title>
@@ -178,7 +184,7 @@ const TableDataClient = ()=>{
                                             <td key={data.id+3}>{data.email}</td>
                                             <td key={data.id+4}>{data.fone}</td>
                                             <td key={data.id+5}><ButtonHome link={`/editarcliente/${data.id}`} variant="outline-success" title="Editar"/></td>
-                                            <td key={data.id+6}> <ButtonHome onClick={()=>MensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
+                                            <td key={data.id+6}> <ButtonHome onClick={()=>MensagemExcluir(data.id, index)} variant="outline-danger" title="Excluir"/> </td>
                                         </tr>
                                     )
                                 }
