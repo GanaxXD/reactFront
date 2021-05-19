@@ -7,10 +7,16 @@ import {ErrorBoundary} from 'react-error-boundary';
 
 let maxClients = 0;
 let baseLink = 'https://api-client-serviceorder.herokuapp.com/clientes';
+
+//variável usada para exibir a tela personalizada (carregando...)
 let loading = true;
+
+//caviáveis para serem usadas no alerta de exclusão
 let mensagem;
 let variantApp;
 let titleApp;
+
+//id do cliente e index para excluir do banco e da lista de clientes local
 let idCliente;
 let indexClienteExcuir;
 
@@ -28,28 +34,31 @@ const TableDataClient = ()=>{
 
     //state
     const [clientes, setClient] = useState([]);
+    //state para exibir mensagem de erro
     const [showError, setShowError] = useState(false);
     const [show, setShow] = useState(false);
 
+    //Exibir modal de exclusão de cliente
     const [showExcludeMessage, setShowExcludeMessage] = useState(false);
 
     async function excluir (id){
         loading = true;
         axios.delete(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, {
+            //Adicionando cross-origin (cors): requisição aceita de qualquer lugar
             headers : {
                 'Access-Control-Allow-Origin' : '*', 
             }
         })
         .then(response=>{
-            // response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
             variantApp = "success"
             mensagem = "O cliente foi excluido na base de dados."
             titleApp = "Exclusão realizada com sucesso!"
+            //fechar o modal com mensagem de exclusão do usuário
             setShowExcludeMessage(false);
             clientes.splice(indexClienteExcuir, 1); //removendo o cliente do nosso array de clientes local (da poição do index, remover 1)
-            console.log(clientes);
         }) 
         .catch((error)=>{
+            //Exibindo mensagem de erro:
             if(error.response){
                 mensagem = error.response.data['titulo'];
                 titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
@@ -69,15 +78,13 @@ const TableDataClient = ()=>{
         })
     }
 
-    
+    //variável para mudar o state do showExcludeMessage, usado no modal de exclusão do  cliente    
     const handleClose = () => setShowExcludeMessage(false);
-
+    //Exibir modal de exclusão
     function MensagemExcluir(id, index){
         indexClienteExcuir = index;
         setShowExcludeMessage(true);
-        idCliente = id;
-        console.log("idClient: ", idCliente, "Index: ", index);
-        
+        idCliente = id;        
     }
 
     //criando lifecycle
@@ -86,7 +93,6 @@ const TableDataClient = ()=>{
             getAllClients().then(data=>{
                 setClient(data);
                 loading = false;
-                console.log(clientes);
             });
         }
         
@@ -111,8 +117,9 @@ const TableDataClient = ()=>{
         }
     }, [show]);
 
+    //Mensagem que exibe no erroboundary: erros disparados para não quebrar a aplicação toda do react
     function ErrorFallback({error}){
-        let mensagemErroAlert = `Tivemos um problemaao tentar efetuar esta ação. Por favor, volte mais tarde. 
+        let mensagemErroAlert = `Tivemos um problema ao tentar efetuar esta ação. Por favor, volte mais tarde. 
                                 Erro: ${error.message}`;
         let titleErroAlert = "Opa, achamos um erro!";
         let variantError = "warning";
@@ -127,6 +134,8 @@ const TableDataClient = ()=>{
 
     return(
         <Fragment>
+
+            {/* Modal de exclusão */}
             <Modal show={showExcludeMessage} onHide={handleClose} backdrop="static" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Excluir Cliente?</Modal.Title>
@@ -143,7 +152,9 @@ const TableDataClient = ()=>{
                     <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)} title="Cancelar"></ButtonHome>
                 </Modal.Footer>
             </Modal>
+
             <br/>
+
             <Card className="cardAppCustomized">
                 <Card.Title className="cardTitle">Clientes Cadastrados</Card.Title>
                 <Card.Body>
@@ -152,9 +163,14 @@ const TableDataClient = ()=>{
                         on-line onde a API está disponível) pode variar, conforme 
                         o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
+                    
+                    {/* Exibe o erro caso a lista de clientes apresente erro
+                        sem quebrar toda a aplicação.
+                    */}
                     <ErrorBoundary onReset={()=>setShow(false)} FallbackComponent={ErrorFallback} 
                                    onError={()=>setShowError(true)}>
                         {
+                            // Exibindo mensagem de carregando dados
                             loading === true?
                                 <div className="carregandoDados">
                                     <h4>Carregando...</h4>
@@ -194,6 +210,7 @@ const TableDataClient = ()=>{
                         }
                         <Card.Footer>
                             {
+                                // Exibindo quantidade de clientes cadastrados
                                 loading === true?
                                 <Spinner animation="grow" size="sm"></Spinner>
                             : `Número de Clientes Cadastrados: ${maxClients}`
