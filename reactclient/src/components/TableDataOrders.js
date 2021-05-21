@@ -1,20 +1,37 @@
 import React, {Fragment, useEffect, useState } from 'react';
-import {Table, Card, Spinner, Alert} from 'react-bootstrap';
+import {Table, Card, Spinner, Alert, Modal, closeButton} from 'react-bootstrap';
 import ButtonHome from '../components/ButtonHome';
 import axios from 'axios';
 import {ErrorBoundary} from 'react-error-boundary'
 
 let maxOrders = 0;
-let maxComments = 0;
+
+//variável usada para controlar o fluxo de obtenção de ordens de serviço do servidor
 let loading = true;
-let loadingComments = true;
+
+//variável usada para controlar o fluxo de obtenção de comentários do servidor
 let baseLinkOrders = 'https://api-client-serviceorder.herokuapp.com/ordemservico';
+
+//variáveis para exibição de mensagens
 let mensagem;
 let variantApp;
 let titleApp;
 
+//variáveis de controle da exclusão local e no banco
+let idOrdem;
+let indexOrdem;
+
 const TableDataOrders = ()=>{
     
+    //state
+    const [orders, setOrder]=useState([]);
+    const [showExcludeMessage, setShowExcludeMessage] = useState(false);
+    const [show, setShow] = useState(false);
+    const [showError, setShowError] = useState(false);
+
+    //variável para fechar o modal
+    const handleClose = () => setShowExcludeMessage(false);
+
     async function getAllOrders(){
         let data = await axios(baseLinkOrders);
         let result = data.data;
@@ -23,28 +40,20 @@ const TableDataOrders = ()=>{
         return result;
     }
     
-    async function getAllComments(id_chamado){
-        let data = await axios(`${baseLinkOrders}/${id_chamado}/comentario`);
-        let result = data.data;
-        maxComments = result.length;
-        loadingComments = false;
-        console.log(result);
-        return result;
-    }
-
-    
     async function excluir (id){
         loading = true;
-        axios.delete(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, {
+        axios.delete(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}`, {
             headers : {
                 'Access-Control-Allow-Origin' : '*', 
             }
         })
         .then(response=>{
-            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
+            console.log(response);
             variantApp = "success"
-            mensagem = "O cliente foi excluido na base de dados."
+            mensagem = "A Ordem de Serviço foi excluida da base de dados."
             titleApp = "Exclusão realizada com sucesso!"
+            setShowExcludeMessage(false);
+            orders.splice(indexOrdem, 1); //exclui um registro a partir da posição indicada
         }) 
         .catch((error)=>{
             if(error.response){
@@ -55,10 +64,12 @@ const TableDataOrders = ()=>{
                 mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
                 titleApp = "Ah, droga!";
                 variantApp = "warning";
+                console.log(error);
             } else {
                 mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
                 titleApp = "Ah, droga!";
                 variantApp = "warning";
+                console.log(error.message);
             }
         }).then(()=>{
             setShow(true);
@@ -66,26 +77,12 @@ const TableDataOrders = ()=>{
         })
     }
 
-    function mensagemExcluir(id){
-        return(<Alert variant="danger" show={showExcludeMessage} onClick={()=>setShowExcludeMessage(false)} dismissible>
-                    <Alert.Heading>Deseja Realmente Excluir Este Cadastro?</Alert.Heading>
-                    <hr/>
-                    Tem certeza que deseja excluir este dado? Ao excluir, o usuário
-                    será apagado da base de dados da aplicação.
-                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
-                    <hr/>
-                    <ButtonHome variant="outline-dark" onClick={()=>excluir(id)}>Excluir</ButtonHome>
-                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)}>Cancelar</ButtonHome>
-                </Alert>
-        );
+    function MensagemExcluir(id, index){
+        indexOrdem = index;
+        setShowExcludeMessage(true);
+        idOrdem = id;
+        
     }
-
-    //state
-    const [orders, setOrder]=useState([]);
-    const [comments, setComment]=useState([]);
-    const [showExcludeMessage, setShowExcludeMessage] = useState(false);
-    const [show, setShow] = useState(false);
-    const [showError, setShowError] = useState(false);
 
     //criando lifecycle
     useEffect(()=>{
@@ -96,15 +93,6 @@ const TableDataOrders = ()=>{
             })
         }
     }, [orders]);
-
-    useEffect(()=>{
-        if(!comments.length){
-            getAllComments('id_ordem').then(data=>{
-                setComment(data);
-                loadingComments = false;
-            })
-        }
-    }, [comments]);
 
     //Para a mensagem de erro (Erro Boundary)
     useEffect(()=>{
@@ -128,6 +116,25 @@ const TableDataOrders = ()=>{
 
     return(
         <Fragment>
+            
+            {/* Modal de exclusão */}
+            <Modal show={showExcludeMessage} onHide={handleClose} backdrop="static" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Excluir Ordem de Serviço?</Modal.Title>
+                </Modal.Header>
+            
+                <Modal.Body>
+                    <p>Tem certeza que deseja excluir esta ordem de serviço? Ao excluir, a ordem
+                    será apagado da base de dados da aplicação.</p>
+                    <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
+                </Modal.Body>
+            
+                <Modal.Footer>
+                    <ButtonHome variant="outline-dark" onClick={()=>excluir(idOrdem)} title="Excluir"></ButtonHome>
+                    <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)} title="Cancelar"></ButtonHome>
+                </Modal.Footer>
+            </Modal>
+
             <br/>
             <Card className="cardAppCustomized">
                 <Card.Title className="cardTitle">Ordens de Serviços</Card.Title>
@@ -168,20 +175,15 @@ const TableDataOrders = ()=>{
                             {
                                 orders.map((data, index)=>
                                     <tr>
-                                        <td key={Date.prototype.getMilliseconds}>{data.id}</td>
-                                        <td key={Date.prototype.getMilliseconds}>{data.cliente.nome}</td>
-                                        <td key={Date.prototype.getMilliseconds}>{data.descricao}</td>
-                                        <td key={Date.prototype.getMilliseconds}>{data.dataAbetura}</td>
-                                        <td key={Date.prototype.getMilliseconds}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
-                                        <td key={Date.prototype.getMilliseconds}>{data.status}</td>
-                                        <td key={Date.prototype.getMilliseconds}><a href="${baseLinkOrders}/comentario/${data.id}">Comentários ({
-                                                // loadingComments ?
-                                                //     <Spinner animation="grow" size="sm"/> 
-                                                // : maxComments
-                                                maxComments
-                                            })</a></td>
-                                        <td key={Math.random()*100}><ButtonHome link={`/editarcliente/${data.id}`} variant="outline-success" title="Editar"/></td>
-                                            <td key={Math.random()*100}> <ButtonHome onClick={()=>mensagemExcluir(data.id)} variant="outline-danger" title="Excluir"/> </td>
+                                        <td key={index + 9}>{data.id}</td>
+                                        <td key={index +10}>{data.cliente.nome}</td>
+                                        <td key={index +11}>{data.descricao}</td>
+                                        <td key={index +12}>{data.dataAbetura}</td>
+                                        <td key={index +13}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
+                                        <td key={index +14}>{data.status}</td>
+                                        <td key={index +15}><ButtonHome link={`/comentario/${data.id}`} title="Comentários" variant="info"/></td>
+                                        <td key={Math.random()*100}><ButtonHome link={`/editarOrdem/${data.id}`} variant="outline-success" title="Editar"/></td>
+                                        <td key={Math.random()*100}><ButtonHome onClick={()=>MensagemExcluir(data.id, index)} variant="outline-danger" title="Excluir"/></td>
                                     </tr>
                                 )
                             }
