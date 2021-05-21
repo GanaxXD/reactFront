@@ -42,7 +42,7 @@ const TableDataOrders = ()=>{
     
     async function excluir (id){
         loading = true;
-        axios.delete(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}`, {
+        axios.delete(`${baseLinkOrders}/${idOrdem}`, {
             headers : {
                 'Access-Control-Allow-Origin' : '*', 
             }
@@ -57,19 +57,28 @@ const TableDataOrders = ()=>{
         }) 
         .catch((error)=>{
             if(error.response){
-                mensagem = error.response.data['titulo'];
-                titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
-                variantApp = "danger";
-            } else if (error.request) {
-                mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
-                titleApp = "Ah, droga!";
-                variantApp = "warning";
+                mensagem = `A ordem de serviço possui um ou mais comentários vinculados a ela. Atualmente não 
+                        disponibilizamos a exclusão em cascata.`
                 console.log(error);
+                titleApp = `Comentários vinculados à ordem de servviço.`;
+                variantApp = "danger";
+                setShowExcludeMessage(false);
+                setShow(true);
+            } else if (error.request) {
+                mensagem = `A ordem de serviço possui um ou mais comentários vinculados a ela. Atualmente não 
+                        disponibilizamos a exclusão em cascata.`
+                console.log(error);
+                titleApp = `Comentários vinculados à ordem de servviço.`;
+                variantApp = "danger";
+                setShowExcludeMessage(false);
+                setShow(true);
             } else {
-                mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
-                titleApp = "Ah, droga!";
-                variantApp = "warning";
-                console.log(error.message);
+                mensagem = `A ordem de serviço possui um ou mais comentários vinculados a ela. Atualmente não 
+                        disponibilizamos a exclusão em cascata.`
+                console.log(error);
+                titleApp = `Comentários vinculados à ordem de servviço.`;
+                variantApp = "danger";
+                setShowExcludeMessage(false);
             }
         }).then(()=>{
             setShow(true);
@@ -112,6 +121,35 @@ const TableDataOrders = ()=>{
             }, 9000)
         }
     }, [show]);
+
+    function MensagemAlerta(){
+        if(show){
+            return (
+                <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
+                    <Alert.Heading>{titleApp}</Alert.Heading>
+                       
+                    <hr/>
+                    {mensagem}
+                </Alert>
+            );
+        }
+        return <p></p>; //precisa retornar um JSX
+    }
+
+    function ErrorFallback({error}){
+        let mensagemErroAlert = `Tivemos um problema, provavelmente causado pelo id da ordem de 
+            serviço informada nessa ação. Por favor, certifique-se que a ordem de serviço existe 
+            no banco. Erro: ${error.message}`;
+        let titleErroAlert = "Opa, achamos um erro!";
+        let variantError = "warning";
+        return (
+            <Alert variant={variantError} show={showError} onClick={()=>setShowError(false)} dismissible>
+                <Alert.Heading>{titleErroAlert}</Alert.Heading>
+                <hr/>
+                {mensagemErroAlert}
+            </Alert>
+        );
+    }
     
 
     return(
@@ -124,8 +162,8 @@ const TableDataOrders = ()=>{
                 </Modal.Header>
             
                 <Modal.Body>
-                    <p>Tem certeza que deseja excluir esta ordem de serviço? Ao excluir, a ordem
-                    será apagado da base de dados da aplicação.</p>
+                    <p>Tem certeza que deseja excluir esta ordem de serviço? Ao excluir, a ordem de serviço
+                    será apagada da base de dados da aplicação. {/* além de <b>TODOS OS SEUS COMENTÁRIOS.</b> */}</p>
                     <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
                 </Modal.Body>
             
@@ -144,8 +182,15 @@ const TableDataOrders = ()=>{
                         on-line onde a API está disponível) pode variar, conforme 
                         o pacote de serviços adiquirido na disponibilização dos serviços.
                     </Card.Text>
+                    
+                    {/* Se o show for true, o código seguinte é ativado */}
+                    <ErrorBoundary onReset={()=>setShow(false)} 
+                                    FallbackComponent={ErrorFallback} 
+                                    onError={()=>setShowError(true)}>
+                        {show && <MensagemAlerta/>}
+                    </ErrorBoundary>
+                    
                     {
-
                         loading === true ? 
                         
                         <div className="progresso">
@@ -175,15 +220,15 @@ const TableDataOrders = ()=>{
                             {
                                 orders.map((data, index)=>
                                     <tr>
-                                        <td key={index + 9}>{data.id}</td>
-                                        <td key={index +10}>{data.cliente.nome}</td>
-                                        <td key={index +11}>{data.descricao}</td>
-                                        <td key={index +12}>{data.dataAbetura}</td>
-                                        <td key={index +13}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
-                                        <td key={index +14}>{data.status}</td>
-                                        <td key={index +15}><ButtonHome link={`/comentario/${data.id}`} title="Comentários" variant="info"/></td>
-                                        <td key={Math.random()*100}><ButtonHome link={`/editarOrdem/${data.id}`} variant="outline-success" title="Editar"/></td>
-                                        <td key={Math.random()*100}><ButtonHome onClick={()=>MensagemExcluir(data.id, index)} variant="outline-danger" title="Excluir"/></td>
+                                        <td key={2}>{data.id}</td>
+                                        <td key={3}>{data.cliente.nome}</td>
+                                        <td key={4}>{data.descricao}</td>
+                                        <td key={5}>{data.dataAbetura}</td>
+                                        <td key={6}>{!data.dataFinalizacao?"Não Definido":data.dataFinalizacao}</td>
+                                        <td key={7}>{data.status}</td>
+                                        <td key={8}><ButtonHome link={`/comentario/${data.id}`} title="Comentários" variant="info"/></td>
+                                        <td key={9}><ButtonHome link={`/editarOrdem/${data.id}`} variant="outline-success" title="Editar"/></td>
+                                        <td key={10}><ButtonHome onClick={()=>MensagemExcluir(data.id, index)} variant="outline-danger" title="Excluir"/></td>
                                     </tr>
                                 )
                             }
