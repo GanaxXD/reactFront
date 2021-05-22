@@ -8,45 +8,56 @@ import { useParams } from 'react-router';
 
 let responseStatus = "";
 let responseMessage = "";
-let orderResponseData;
 let variantApp;
 let titleApp;
-
+//variável de controle para carregar a ordem de serviço
+let ordemObtida = false;
 
 const FormOrdemServicoEdit = () => {
 
     const {id} = useParams();
 
-    //variável de controle para carregar a ordem de serviço
-    let ordemObtida = false;
-    
     const initialState = {
         clienteId : '',
         descricao : '',
         preco: ''
     }
-
-    if(ordemObtida == false){
-        //recuperando dados da ordem de serviço selecionada
-        axios.get(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}`,{
-            //Adicionando cross-origin (cors): requisição aceita de qualquer lugar
-            headers : {
-                'Access-Control-Allow-Origin' : '*', 
-            }
-        }).then(response => {
-            ordem.clienteId = response.data.cliente['id'];
-            ordem.descricao = response.data.descricao;
-            ordem.preco = response.data.preco;
-            ordemObtida = true;
-            console.log(ordem);
-        });
-    }
-
     const [ordem, setOrdem] = useState(initialState);
+
     const [validate, setValidate]=useState(false);
     const [show, setShow] = useState(false);
     const [loadingPost, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
+
+    async function buscarOrdem(id){
+        setLoading(true);
+        axios.get(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}`)
+            .then((response) => {
+                console.log(response.data);
+                ordem.clienteId = response.data.cliente.id;
+                ordem.descricao = response.data.descricao;
+                ordem.preco = response.data.preco;
+                console.log("ORDEM: ",ordem);
+            }).catch((error) =>{
+                if(error.response){
+                    responseMessage = error.response.data['titulo'];
+                    titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
+                    variantApp = "danger";
+                } else if (error.request){
+                    console.log("AQUI 2");
+                    responseMessage = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                    titleApp = "Ah, droga!";
+                    variantApp = "warning";
+                } else {
+                    console.log("AQUI 3");
+                    responseMessage = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                    titleApp = "Ah, droga!";
+                    variantApp = "warning";
+                }
+            }).then(()=>{
+                setLoading(false);
+            });
+    }
 
     async function editar(id, ordem){
         setLoading(true);
@@ -69,7 +80,6 @@ const FormOrdemServicoEdit = () => {
                     console.log("Erro response: ", error.response);
                     responseStatus = error.response.status;
                     responseMessage = error.response.data['titulo'];
-                    orderResponseData = error.response.data;
                     variantApp = "danger";
                     titleApp = `Ah, droga! Ocorreu um erro! (Status da resposta: ${responseStatus})`;
                     // setLoading(false);
@@ -105,16 +115,22 @@ const FormOrdemServicoEdit = () => {
             console.log("Show dentro do useEffect: ", show);
             setTimeout(()=>{
                 setShow(false);
-                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 9000);
         }
     }, [show]);
+
+    useEffect(()=>{
+        if(ordem.clienteId==''){
+            buscarOrdem(id);
+        }
+    }, [ordem]);
 
     const handlerOrderChange = event =>{
         setOrdem({
             ...ordem, [event.currentTarget.name]: event.currentTarget.value
         })
     }
+
 
     const handleSubmit = (event)=>{
         console.log("#### Dentro do handleSubmit: ####");
@@ -133,7 +149,6 @@ const FormOrdemServicoEdit = () => {
         if(showError){
             setTimeout(()=>{
                 setShowError(false);
-                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 11000);
         }
     }, [showError]);
@@ -156,7 +171,7 @@ const FormOrdemServicoEdit = () => {
     function MensagemAlerta(){
         console.log("#### Dentro do MensagemAlerta: ####");
         console.log("Show: ", show, " LoadingPost: ", loadingPost);
-        if(show && loadingPost==false){
+        if(show && !loadingPost){
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
                     <Alert.Heading>{titleApp}</Alert.Heading>
@@ -184,9 +199,7 @@ const FormOrdemServicoEdit = () => {
             <NavBarApp />
             <h1 className="hcabecalho">Cadastro de Ordem de Serviço</h1>
             {/* Se o show for true, o código seguinte é ativado */}
-            <ErrorBoundary onReset={()=>setShow(false)} 
-                            FallbackComponent={ErrorFallback} 
-                            onError={()=>setShowError(true)}>
+            <ErrorBoundary onReset={()=>setShow(false)} FallbackComponent={ErrorFallback} onError={()=>setShowError(true)}>
                 {show && <MensagemAlerta/>}
             </ErrorBoundary>
                 <Container fluid="xl">
@@ -207,8 +220,9 @@ const FormOrdemServicoEdit = () => {
                                         type="number"
                                         name="clienteId"
                                         value = {ordem?.clienteId}
+                                        defaultValue = {ordem.clienteId}
                                         onChange={handlerOrderChange}
-                                        disabled = "true"
+                                        disabled = {true}
                                     />
                                     <Form.Control.Feedback type="invalid">O id do ciente é obrigatório!</Form.Control.Feedback>
                                 </Form.Group> 
@@ -222,6 +236,7 @@ const FormOrdemServicoEdit = () => {
                                         type="number"
                                         name="preco"
                                         value ={ordem?.preco}
+                                        defaultValue = {ordem.preco}
                                         onChange={handlerOrderChange}
                                         required
                                     />
@@ -238,6 +253,7 @@ const FormOrdemServicoEdit = () => {
                                     type="text"
                                     name="descricao"
                                     value = {ordem?.descricao}
+                                    defaultValue = {ordem.descricao}
                                     onChange={handlerOrderChange}
                                     required
                                 />
