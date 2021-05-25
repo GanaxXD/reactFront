@@ -8,7 +8,7 @@ import { useParams } from 'react-router';
 let maxComments = 0;
 
 //variável usada para controlar o fluxo de obtenção de ordens de serviço do servidor
-let loading = true;
+let loading;
 
 //variável usada para controlar o fluxo de obtenção de comentários do servidor
 let loadingComments = true;
@@ -21,22 +21,26 @@ let titleApp;
 const TableDataOrders = ()=>{
 
     const {id} = useParams();
+    const arrayData = [];
     
     //state
-    const [comments, setComment]=useState([]);
+    const [comments, setComment]=useState(arrayData);
     const [showExcludeMessage, setShowExcludeMessage] = useState(false);
     const [show, setShow] = useState(false);
     const [showError, setShowError] = useState(false);
 
-    async function getAllComments (id){
+    async function getAllComments(id){
+        console.log("iniciando o get");
         loading = true;
-        axios.get(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}/comentario`, {
+        axios(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}/comentario`,{
             headers : {
                 'Access-Control-Allow-Origin' : '*', 
-            }
+            },
         })
-        .then(response =>{
+        .then((response) =>{
             maxComments = response.data.length;
+            setComment(response.data);
+            console.log("Número de comentários: ",maxComments, "resultado: ", response, "Comentarios: ", comments );
         })
         .catch((error)=>{
             if(error.response){
@@ -53,40 +57,6 @@ const TableDataOrders = ()=>{
                 variantApp = "warning";
             }
         }).then(()=>{
-            setShow(true);
-            loading = false;
-        })
-    }
-
-    async function excluir (id, index){
-        loading = true;
-        axios.delete(`https://api-client-serviceorder.herokuapp.com/clientes/${id}`, {
-            headers : {
-                'Access-Control-Allow-Origin' : '*', 
-            }
-        })
-        .then(response=>{
-            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
-            variantApp = "success"
-            mensagem = "O cliente foi excluido na base de dados."
-            titleApp = "Exclusão realizada com sucesso!"
-        }) 
-        .catch((error)=>{
-            if(error.response){
-                mensagem = error.response.data['titulo'];
-                titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
-                variantApp = "danger";
-            } else if (error.request) {
-                mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
-                titleApp = "Ah, droga!";
-                variantApp = "warning";
-            } else {
-                mensagem = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
-                titleApp = "Ah, droga!";
-                variantApp = "warning";
-            }
-        }).then(()=>{
-            setShow(true);
             loading = false;
         })
     }
@@ -99,7 +69,6 @@ const TableDataOrders = ()=>{
                     será apagado da base de dados da aplicação.
                     <p className="anuncio">Caso desista da ideia, clique no "X" ou no botão "Cancelar"</p>
                     <hr/>
-                    <ButtonHome variant="outline-dark" onClick={()=>excluir(id, index)}>Excluir</ButtonHome>
                     <ButtonHome variant="success" onClick={()=>setShowExcludeMessage(false)}>Cancelar</ButtonHome>
                 </Alert>
         );
@@ -107,11 +76,10 @@ const TableDataOrders = ()=>{
 
     //criando lifecycle
     useEffect(()=>{
-        if(!comments.length){
-            getAllComments(id).then(data=>{
-                setComment(data);
-                loadingComments = false;
-            })
+        if(maxComments === 0){
+            getAllComments(id).then(response => {
+                setComment(response);
+            });
         }
     }, [comments]);
 
@@ -153,10 +121,10 @@ const TableDataOrders = ()=>{
             <br/>
             <ErrorBoundary onReset={()=>setShow(false)} FallbackComponent={ErrorFallback} onError={()=>setShowError(true)}>
             <Card className="cardAppCustomized">
-                <Card.Title className="cardTitle">Ordens de Serviços</Card.Title>
+                <Card.Title className="cardTitle">Comentários</Card.Title>
                 <Card.Body>
                     <Card.Text className="anuncio">A obtenção dos dados desta operação 
-                        pode variar, conforme. Aguarde...
+                        pode variar. Aguarde...
                     </Card.Text>
                     {
 
@@ -171,35 +139,37 @@ const TableDataOrders = ()=>{
                         </div>
                         
                         :
-                    
-                    <Table responsive striped bordered hover variant="dark" size="sm">
-                        <thead>
-                            <tr>
-                                <th>Ordem de Serviço</th>
-                                <th>Comentário</th>
-                                <th colSpan="3">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* Precisa fazer um map no array resultado da base de dados */}
-                            {
-                                comments.map((data, index)=>
+                        <Table responsive striped bordered hover variant="dark" size="sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ordem de Serviço</th>
+                                    <th>Comentário</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {/* Precisa fazer um map no array resultado da base de dados */}
+                                {
+                                    comments.length >=0 ?
+                                        comments.map((data, index)=>
+                                            <tr>
+                                                <td>{index+1}</td>
+                                                <td key={Date.prototype.getMilliseconds}>{id}</td>
+                                                <td key={Date.prototype.getMilliseconds}>{data.descricao}</td>
+                                            </tr>
+                                        )
+                                    :
                                     <tr>
-                                        <td key={Date.prototype.getMilliseconds}>{id}</td>
-                                        <td key={Date.prototype.getMilliseconds}>{data.descricao}</td>
-                                        <td key={Math.random()*100}><ButtonHome variant="outline-success" title="Editar"/></td>
-                                        <td key={Math.random()*100}><ButtonHome onClick={()=>{}} variant="outline-danger" title="Excluir"/></td>
+                                        <td>Não há comentários para esta ordem de serviço.</td>
                                     </tr>
-                                )
-                            }
-                        </tbody>
-                    </Table>
-
+                                }
+                            </tbody>
+                        </Table>
                     }
                 </Card.Body>
                 <Card.Footer>
                     {
-                        loading?
+                        loading ?
                         <Spinner animation="grow" size="sm"></Spinner>
                         : `Número de Coemntários da Ordem de Serviço: ${maxComments}`
                     }                       
@@ -208,7 +178,7 @@ const TableDataOrders = ()=>{
         </ErrorBoundary>
              {/* Footer */}
              <hr/>
-            <ButtonHome variant="outline-dark" link="/" title="Voltar Para a Página Inicial"/>
+            <ButtonHome variant="outline-dark" link="/listaordens" title="Voltar"/>
             <br/>
             <br/>
         </Fragment>

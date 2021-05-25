@@ -13,6 +13,8 @@ let titleApp;
 //variável de controle para carregar a ordem de serviço
 let ordemObtida = false;
 
+let date;
+
 const FormOrdemServicoEdit = () => {
 
     const {id} = useParams();
@@ -20,7 +22,10 @@ const FormOrdemServicoEdit = () => {
     const initialState = {
         clienteId : '',
         descricao : '',
-        preco: ''
+        preco: '',
+        dataAbertura: '',
+        dataFinalizacao: '',
+        status: ''
     }
     const [ordem, setOrdem] = useState(initialState);
 
@@ -37,31 +42,39 @@ const FormOrdemServicoEdit = () => {
                 ordem.clienteId = response.data.cliente.id;
                 ordem.descricao = response.data.descricao;
                 ordem.preco = response.data.preco;
+                ordem.dataAbertura = Date.now();
+                ordem.dataFinalizacao = null;
+                ordem.status ="ABERTA";
                 console.log("ORDEM: ",ordem);
             }).catch((error) =>{
                 if(error.response){
                     responseMessage = error.response.data['titulo'];
                     titleApp = `Ah, droga! O Erro ${error.response.status} foi retornado!`;
                     variantApp = "danger";
+                    setShow(true);
                 } else if (error.request){
                     console.log("AQUI 2");
-                    responseMessage = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                    responseMessage = "Ops... Achamos um erro ou a comunicação com o servidor está falhando. Por Favor, tente mais tarde ou atualize a página limpando o cache.";
                     titleApp = "Ah, droga!";
                     variantApp = "warning";
+                    setShow(true);
                 } else {
                     console.log("AQUI 3");
-                    responseMessage = "Ops... Achamos um erro. Por Favor, tente mais tarde.";
+                    responseMessage = "Ops... Achamos um erro ou a comunicação com o servidor está falhando. Por Favor, tente mais tarde ou atualize a página limpando o cache.";
                     titleApp = "Ah, droga!";
                     variantApp = "warning";
+                    setShow(true);
                 }
             }).then(()=>{
                 setLoading(false);
             });
     }
 
-    async function editar(id, ordem){
+    async function editar(){
+        setOrdem(ordem);
+        console.log(ordem);
         setLoading(true);
-        axios.post(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}`, ordem,{
+        axios.put(`https://api-client-serviceorder.herokuapp.com/ordemservico/${id}`, ordem,{
             //Adicionando cross-origin (cors): requisição aceita de qualquer lugar
             headers : {
                 'Access-Control-Allow-Origin' : '*', 
@@ -72,17 +85,27 @@ const FormOrdemServicoEdit = () => {
                 responseMessage = "A ordem de serviço foi editada com sucesso!";
                 variantApp = "success";
                 titleApp = "Ordem de Serviço Editada com Sucesso!";
-                // setLoading(false);
             })
             .catch((error)=>{
                 //Quando a request não retorna uma resposta dentro do range 2xx
                 if(error.response){
-                    console.log("Erro response: ", error.response);
+                    
+                    
+                    console.log("Opa. Um erro na resposta foi retornado: ", error.response); 
+
                     responseStatus = error.response.status;
-                    responseMessage = error.response.data['titulo'];
-                    variantApp = "danger";
+                    responseMessage = `Parece que essa funcionalidade está com problemas.
+                    Pedimos desculpas pelo transtorno.`;
+                    variantApp = "warning";
                     titleApp = `Ah, droga! Ocorreu um erro! (Status da resposta: ${responseStatus})`;
-                    // setLoading(false);
+                    
+
+                    // console.log("Erro response: ", error.response);
+                    // responseStatus = error.response.status;
+                    // responseMessage = error.response.data['titulo'];
+                    // variantApp = "danger";
+                    // titleApp = `Ah, droga! Ocorreu um erro! (Status da resposta: ${responseStatus})`;
+                    
                 //quando a request é feita mas não retorna resposta (instancia de XMLHttpRequest se no Browser; http.ClientRequest, se no Node.js)
                 } else if (error.request){
                     responseMessage = `Estamos enfrentando problemas com essa ação. 
@@ -91,7 +114,6 @@ const FormOrdemServicoEdit = () => {
                     variantApp = "warning";
                     titleApp = `Ah, droga! Parece que temos um erro nesta ação!`;
                     console.log("Error Request: ", error.request);
-                    // setLoading(false);
                 } else {
                     console.log("Error geral: ", error);
                     responseMessage = `Estamos enfrentando problemas com essa ação. 
@@ -101,7 +123,7 @@ const FormOrdemServicoEdit = () => {
                     titleApp = `Ah, droga! Parece que temos um erro nesta ação!`;
                     // setLoading(false);
                 }
-                
+
                 //Sempre ocorrerá
             }).then(()=>{
                 setLoading(false);
@@ -110,9 +132,7 @@ const FormOrdemServicoEdit = () => {
     }
 
     useEffect(()=>{
-        console.log("#### Dentro do useEffect do alerta: ####")
         if(show){
-            console.log("Show dentro do useEffect: ", show);
             setTimeout(()=>{
                 setShow(false);
             }, 9000);
@@ -133,12 +153,8 @@ const FormOrdemServicoEdit = () => {
 
 
     const handleSubmit = (event)=>{
-        console.log("#### Dentro do handleSubmit: ####");
         if(event.currentTarget.checkValidity() === true){
-            console.log("Show dentro do IF/antes do cadastro: ", show);
-            editar(id, ordem).then(console.log("AQUI:   ----->  ",variantApp, responseMessage, titleApp));
-            console.log("AQUI:   ----->  ",variantApp, responseMessage, titleApp);
-            console.log("Show dentro do IF/depois do cadastro: ", show);
+            editar().then(console.log("Edição finalizada."));
             event.preventDefault();
         }
         setValidate(true);
@@ -169,8 +185,6 @@ const FormOrdemServicoEdit = () => {
     }
 
     function MensagemAlerta(){
-        console.log("#### Dentro do MensagemAlerta: ####");
-        console.log("Show: ", show, " LoadingPost: ", loadingPost);
         if(show && !loadingPost){
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>
@@ -220,9 +234,9 @@ const FormOrdemServicoEdit = () => {
                                         type="number"
                                         name="clienteId"
                                         value = {ordem?.clienteId}
-                                        defaultValue = {ordem.clienteId}
-                                        onChange={handlerOrderChange}
-                                        disabled = {true}
+                                        onChange ={()=>null}
+                                        // onChange={handlerOrderChange}
+                                        // disabled = {true}
                                     />
                                     <Form.Control.Feedback type="invalid">O id do ciente é obrigatório!</Form.Control.Feedback>
                                 </Form.Group> 
@@ -236,7 +250,6 @@ const FormOrdemServicoEdit = () => {
                                         type="number"
                                         name="preco"
                                         value ={ordem?.preco}
-                                        defaultValue = {ordem.preco}
                                         onChange={handlerOrderChange}
                                         required
                                     />
@@ -253,7 +266,6 @@ const FormOrdemServicoEdit = () => {
                                     type="text"
                                     name="descricao"
                                     value = {ordem?.descricao}
-                                    defaultValue = {ordem.descricao}
                                     onChange={handlerOrderChange}
                                     required
                                 />
