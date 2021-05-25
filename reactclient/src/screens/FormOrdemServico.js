@@ -18,30 +18,24 @@ const FormOrdemServico = () => {
         setLoading(true);
         axios.post('https://api-client-serviceorder.herokuapp.com/ordemservico', ordem)
             .then((response)=>{
-                console.log("Resposta: ",response);
-                response.setHeader('Access-Control-Allow-Origin', '*');
+                // response.setHeader('Access-Control-Allow-Origin', '*');
                 responseMessage = "A ordem de serviço foi cadastrada com sucesso!";
                 variantApp = "success";
                 titleApp = "Ordem de Serviço Cadastrada com Sucesso!";
-                // setLoading(false);
             })
             .catch((error)=>{
                 //Quando a request não retorna uma resposta dentro do range 2xx
                 if(error.response){
-                    console.log("Erro response: ", error.response);
                     responseStatus = error.response.status;
                     responseMessage = error.response.data['titulo'];
                     orderResponseData = error.response.data;
                     variantApp = "danger";
                     titleApp = `Ah, droga! Ocorreu um erro! (Status da resposta: ${responseStatus})`;
-                    // setLoading(false);
                 //quando a request é feita mas não retorna resposta (instancia de XMLHttpRequest se no Browser; http.ClientRequest, se no Node.js)
                 } else if (error.request){
                     console.log("Error Request: ", error.request);
-                    // setLoading(false);
                 } else {
                     console.log("Error geral: ", error);
-                    // setLoading(false);
                 }
                 
                 //Sempre ocorrerá
@@ -64,12 +58,9 @@ const FormOrdemServico = () => {
     const [showError, setShowError] = useState(false);
 
     useEffect(()=>{
-        console.log("#### Dentro do useEffect do alerta: ####")
         if(show){
-            console.log("Show dentro do useEffect: ", show);
             setTimeout(()=>{
                 setShow(false);
-                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 5000);
         }
     }, [show]);
@@ -81,12 +72,8 @@ const FormOrdemServico = () => {
     }
 
     const handleSubmit = (event)=>{
-        console.log("#### Dentro do handleSubmit: ####");
         if(event.currentTarget.checkValidity() === true){
-            console.log("Show dentro do IF/antes do cadastro: ", show);
-            cadastrar(ordem).then(console.log("AQUI:   ----->  ",variantApp, responseMessage, titleApp));
-            console.log("AQUI:   ----->  ",variantApp, responseMessage, titleApp);
-            console.log("Show dentro do IF/depois do cadastro: ", show);
+            cadastrar(ordem).then(console.log("Cadastro realizado com sucesso!"));
             event.preventDefault();
         }
         setValidate(true);
@@ -97,7 +84,6 @@ const FormOrdemServico = () => {
         if(showError){
             setTimeout(()=>{
                 setShowError(false);
-                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 9000);
         }
     }, [showError]);
@@ -118,8 +104,6 @@ const FormOrdemServico = () => {
     }
 
     function MensagemAlerta(){
-        console.log("#### Dentro do MensagemAlerta: ####");
-        console.log("Show: ", show, " LoadingPost: ", loadingPost);
         if(show && loadingPost==false){
             return (
                 <Alert variant={variantApp} show={show} onClick={()=>setShow(false)} dismissible>

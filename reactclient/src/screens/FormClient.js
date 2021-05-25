@@ -20,8 +20,7 @@ const FormClient = () =>{
         setLoading(true);
         return axios.post('https://api-client-serviceorder.herokuapp.com/clientes', client)
         .then(response => {
-            console.log("entrei no then", response);
-            response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
+            //response.setHeader('Access-Control-Allow-Origin', '*'); //permitindo que as requisições sejam de qualquer origem
             variantApp = "success"
             mensagem = "O cliente foi cadastrado na base de dados."
             titleApp = "Cadastrado com sucesso!"
@@ -29,11 +28,9 @@ const FormClient = () =>{
             
         }).catch( function (error) {
             if(error.response){
-                console.log("entrei no erro", error);
                 statusRequest = error.response.status;
                 mensagem = `Erro ao cadastrar o cliente. O erro "${error.response.status}"
                 foi retornado. Detalhes: ${error.response.data['titulo']}`
-                console.log("titulo: ", error.response.data['titulo'], "status: ", error.response.status)
                 variantApp="danger"
                 titleApp = `Ah, que pena. Ocorreu um erro! (Status da resposta: ${error.response.status})`
                 setLoading(false);
@@ -54,13 +51,10 @@ const FormClient = () =>{
 
     useEffect(()=>{
         if(show){
-            console.log("Antes do If: Show: ", show, "Loading: ", loadingPost);
             setTimeout(()=>{
                 setShow(false);
-                console.log("Dentro do TimeOut: Show: ", show, "Loading: ", loadingPost);
             },5000);
             setLoading(false);
-            console.log("Depois do If: Show: ", show, "Loading: ", loadingPost);
         }
     }, [show]);
 
@@ -68,7 +62,6 @@ const FormClient = () =>{
         if(showError){
             setTimeout(()=>{
                 setShowError(false);
-                console.log("Show dentro do useEffect/ Depois setTimeout: ", show," loadinPost: " ,loadingPost);
             }, 9000);
         }
     }, [showError])

@@ -60,7 +60,7 @@ const TableDataOrders = ()=>{
                 mensagem = `A ordem de serviço possui um ou mais comentários vinculados a ela. Atualmente não 
                         disponibilizamos a exclusão em cascata.`
                 console.log(error);
-                titleApp = `Comentários vinculados à ordem de servviço.`;
+                titleApp = `Comentários vinculados à ordem de serviço.`;
                 variantApp = "danger";
                 setShowExcludeMessage(false);
                 setShow(true);
@@ -68,7 +68,7 @@ const TableDataOrders = ()=>{
                 mensagem = `A ordem de serviço possui um ou mais comentários vinculados a ela. Atualmente não 
                         disponibilizamos a exclusão em cascata.`
                 console.log(error);
-                titleApp = `Comentários vinculados à ordem de servviço.`;
+                titleApp = `Comentários vinculados à ordem de serviço.`;
                 variantApp = "danger";
                 setShowExcludeMessage(false);
                 setShow(true);
@@ -76,7 +76,7 @@ const TableDataOrders = ()=>{
                 mensagem = `A ordem de serviço possui um ou mais comentários vinculados a ela. Atualmente não 
                         disponibilizamos a exclusão em cascata.`
                 console.log(error);
-                titleApp = `Comentários vinculados à ordem de servviço.`;
+                titleApp = `Comentários vinculados à ordem de serviço.`;
                 variantApp = "danger";
                 setShowExcludeMessage(false);
             }

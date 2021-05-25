@@ -223,6 +223,9 @@ const TableDataClient = ()=>{
              <hr/>
             <ButtonHome variant="outline-dark" link="/" title="Voltar Para a Página Inicial"/>
             <br/>
+            <br/>
+            <br/>
+            <div/>
         </Fragment>
     );
 }
