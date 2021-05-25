@@ -23,10 +23,6 @@
     "build2": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    
-
-
-
     "dev": "webpack serve",
     "start": "node server.js",
     "build": "webpack --mode production"
